@@ -31,6 +31,11 @@
           "name": "CMAKE_CXX_COMPILER",
           "value": "C:/emsdk-main/upstream/emscripten/em++.bat",
           "type": "STRING"
+        },
+        {
+          "name": "CMAKE_INSTALL_PREFIX",
+          "value": "C:/Users/Lewis/Documents/GitHub/McCrossinScreeps/cpp/out/install/Mingw64-Release",
+          "type": "PATH"
         }
       ],
       "intelliSenseMode": "linux-gcc-x64",

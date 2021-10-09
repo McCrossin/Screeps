@@ -365,4 +365,5 @@ FodyWeavers.xsd
 build/
 dist/
 copy_dist.bat
-CMakeSettings.json
+cpp/CMakeSettings.json
+cpp/CMakeSettings.json
