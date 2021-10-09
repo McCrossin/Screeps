@@ -91,3 +91,51 @@ module.exports.loop = function () {
     }
 }
 ```
+
+Next we want to make a creep that upgrades for us, but if we make a new creep with out current code it will perform the same role as the harvester. To seperate these creeps we can assign them different roles within memory like so:
+```js
+Game.creeps['Harvester1'].memory.role = 'harvester';
+Game.creeps['Upgrader1'].memory.role = 'upgrader';
+```
+
+Now we need to define creeps with the role of "Harvester" should bring energy to spawn whilst creeps with the role "upgrader" should go to the Controller and apply the "upgradeController" Function. This can be done by making a new module "role.upgrader" and using the following code:
+```js
+var roleUpgrader = {
+
+    /** @param {Creep} creep **/
+    run: function(creep) {
+	    if(creep.store[RESOURCE_ENERGY] == 0) {
+            var sources = creep.room.find(FIND_SOURCES);
+            if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(sources[0]);
+            }
+        }
+        else {
+            if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(creep.room.controller);
+            }
+        }
+	}
+};
+
+module.exports = roleUpgrader;
+```
+
+Now in the main module we need to define the creeps behaviour based on their role. This can be done using the following code:
+```js
+var roleHarvester = require('role.harvester');
+var roleUpgrader = require('role.upgrader');
+
+module.exports.loop = function () {
+
+    for(var name in Game.creeps) {
+        var creep = Game.creeps[name];
+        if(creep.memory.role == 'harvester') {
+            roleHarvester.run(creep);
+        }
+        if(creep.memory.role == 'upgrader') {
+            roleUpgrader.run(creep);
+        }
+    }
+}
+```
