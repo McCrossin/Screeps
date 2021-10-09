@@ -1,4 +1,4 @@
-This is a summary of lessons learnt from the tutorial.
+**This is a summary of lessons learnt from the tutorial.**
 
 The following code can be used to create a basic creep:
 ```js
@@ -138,4 +138,48 @@ module.exports.loop = function () {
         }
     }
 }
+```
+
+If you do not keep upgrading your controller you can lose control of the room.
+
+Next we need to build using extentions that are gained by upgrading the controller. We want to spawn a creep that will build for us, this can be done like so:
+```js
+Game.spawns['Spawn1'].spawnCreep( [WORK, CARRY, MOVE], 'Builder1',
+    { memory: { role: 'builder' } } );
+```
+
+Because of our adjustment to the main loop, this creep won't move until we define a role for "builder". We will create a seperate "role.builder" module, adding new elements such as Path visualisation and logic telling the creep when to switch paths:
+```js
+var roleBuilder = {
+
+    /** @param {Creep} creep **/
+    run: function(creep) {
+
+	    if(creep.memory.building && creep.store[RESOURCE_ENERGY] == 0) {
+            creep.memory.building = false;
+            creep.say('🔄 harvest');
+	    }
+	    if(!creep.memory.building && creep.store.getFreeCapacity() == 0) {
+	        creep.memory.building = true;
+	        creep.say('🚧 build');
+	    }
+
+	    if(creep.memory.building) {
+	        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+            if(targets.length) {
+                if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
+                }
+            }
+	    }
+	    else {
+	        var sources = creep.room.find(FIND_SOURCES);
+            if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(sources[0], {visualizePathStyle: {stroke: '#ffaa00'}});
+            }
+	    }
+	}
+};
+
+module.exports = roleBuilder;
 ```
