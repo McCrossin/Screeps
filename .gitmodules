@@ -1,0 +1,6 @@
+[submodule "screepsxx"]
+	path = screepsxx
+	url = https://github.com/UltraCoderRU/screepsxx.git
+[submodule "cpp/screepsxx"]
+	path = cpp/screepsxx
+	url = https://github.com/UltraCoderRU/screepsxx.git

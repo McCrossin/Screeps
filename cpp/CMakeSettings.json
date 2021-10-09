@@ -1,0 +1,45 @@
+﻿{
+  "configurations": [
+    {
+      "name": "Mingw64-Release",
+      "generator": "Ninja",
+      "configurationType": "Release",
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "buildCommandArgs": "-v",
+      "ctestCommandArgs": "",
+      "inheritEnvironments": [ "mingw_64" ],
+      "environments": [
+        {
+          "MINGW64_ROOT": "C:/msys64/mingw64",
+          "BIN_ROOT": "${env.MINGW64_ROOT}/bin",
+          "FLAVOR": "x86_64-w64-mingw32",
+          "TOOLSET_VERSION": "9.1.0",
+          "PATH": "${env.MINGW64_ROOT}/bin;${env.MINGW64_ROOT}/../usr/local/bin;${env.MINGW64_ROOT}/../usr/bin;${env.MINGW64_ROOT}/../bin;${env.PATH}",
+          "INCLUDE": "${env.INCLUDE};${env.MINGW64_ROOT}/include/c++/${env.TOOLSET_VERSION};${env.MINGW64_ROOT}/include/c++/${env.TOOLSET_VERSION}/tr1;${env.MINGW64_ROOT}/include/c++/${env.TOOLSET_VERSION}/${env.FLAVOR}",
+          "environment": "mingw_64",
+          "DCMAKE_TOOLCHAIN_FILE": "C:\\emsdk-main\\upstream\\emscripten\\cmake\\Modules\\Platform\\Emscripten.cmake"
+        }
+      ],
+      "variables": [
+        {
+          "name": "CMAKE_C_COMPILER",
+          "value": "C:/emsdk-main/upstream/emscripten/emcc.bat",
+          "type": "STRING"
+        },
+        {
+          "name": "CMAKE_CXX_COMPILER",
+          "value": "C:/emsdk-main/upstream/emscripten/em++.bat",
+          "type": "STRING"
+        },
+        {
+          "name": "CMAKE_INSTALL_PREFIX",
+          "value": "C:/Users/Lewis/Documents/GitHub/McCrossinScreeps/cpp/out/install/Mingw64-Release",
+          "type": "PATH"
+        }
+      ],
+      "intelliSenseMode": "linux-gcc-x64",
+      "cmakeCommandArgs": "-G Ninja -DCMAKE_TOOLCHAIN_FILE=C:\\emsdk-main\\upstream\\emscripten\\cmake\\Modules\\Platform\\Emscripten.cmake .."
+    }
+  ]
+}
