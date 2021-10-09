@@ -1,5 +1,7 @@
-**This is a summary of lessons learnt from the tutorial.**
+# Summary of Screeps Tutorial
 
+
+## Basic Automation and syntax
 The following code can be used to create a basic creep:
 ```js
 Game.spawns['Spawn1'].spawnCreep( [WORK, CARRY, MOVE], 'Harvester1' );
@@ -92,6 +94,7 @@ module.exports.loop = function () {
 }
 ```
 
+## Upgrading and Building
 Next we want to make a creep that upgrades for us, but if we make a new creep with out current code it will perform the same role as the harvester. To seperate these creeps we can assign them different roles within memory like so:
 ```js
 Game.creeps['Harvester1'].memory.role = 'harvester';
@@ -245,3 +248,14 @@ for(var name in Game.rooms) {
         console.log('Room "'+name+'" has '+Game.rooms[name].energyAvailable+' energy');
     }
 ```
+
+Now we have enough energy to make a faster creep, we can use the following to make a creep that is 4 times as fast:
+```js
+Game.spawns['Spawn1'].spawnCreep( [WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE],
+    'HarvesterBig',
+    { memory: { role: 'harvester' } } );
+```
+
+_Note: This creep will move half as fast as our smaller creep._
+
+## Automatic Creep spawning
