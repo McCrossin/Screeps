@@ -318,3 +318,97 @@ module.exports.loop = function () {
     }
 }
 ```
+
+_Note: The "Game.spawns['Spawn1'.spawning]" if statement is a visual QoL to indicate what type of creep is spawning._
+
+It is important to clear memory when creeps die, as dead creeps are still stored in memory. This can be done by adding the following code into our main loop:
+```js
+for(var name in Memory.creeps) {
+        if(!Game.creeps[name]) {
+            delete Memory.creeps[name];
+            console.log('Clearing non-existing creep memory:', name);
+        }
+    }
+
+```
+
+_Note: Another way to automate creep spawning is "StructureSpawn.renewCreep"_
+
+
+## Defending your room
+The following code can be used to activate safe mode which prevents other creeps from using harmful methods in the room:
+```js
+Game.spawns['Spawn1'].room.controller.activateSafeMode();
+```
+
+_Note: Safe mode can only be used on one room at a time and you have a limited number of uses._
+
+Next we will spawn a tower manually to defend with the following code:
+```js
+Game.spawns['Spawn1'].room.createConstructionSite( 23, 22, STRUCTURE_TOWER );
+```
+
+The tower will be unusable without energy, so we need to modify our Harvester code to bring energy to the tower like so:
+```js
+var roleHarvester = {
+
+    /** @param {Creep} creep **/
+    run: function(creep) {
+	    if(creep.store.getFreeCapacity() > 0) {
+            var sources = creep.room.find(FIND_SOURCES);
+            if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(sources[0], {visualizePathStyle: {stroke: '#ffaa00'}});
+            }
+        }
+        else {
+            var targets = creep.room.find(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return (structure.structureType == STRUCTURE_EXTENSION ||
+                                structure.structureType == STRUCTURE_SPAWN ||
+                                structure.structureType == STRUCTURE_TOWER) && 
+                                structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+                    }
+            });
+            if(targets.length > 0) {
+                if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
+                }
+            }
+        }
+	}
+};
+
+module.exports = roleHarvester;
+```
+
+A tower has several methods such as Attack, Heal and Repair and each action spends 10 energy. The following code can be added to our main loop to attack the closest enemy creep (distance matters):
+```js
+var tower = Game.getObjectById('d3e54db89467ad373a9beec3');
+    if(tower) {
+        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if(closestHostile) {
+            tower.attack(closestHostile);
+        }
+    }
+```
+
+_Note: The above code references a specific tower to control it._
+
+Our wall has been damaged so we need to repair it, to do this we need to setup autorepair. We can use our tower to this, we will modify our code in our main loop like so:
+```js
+var tower = Game.getObjectById('d3e54db89467ad373a9beec3');
+    if(tower) {
+        var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+            filter: (structure) => structure.hits < structure.hitsMax
+        });
+        if(closestDamagedStructure) {
+            tower.repair(closestDamagedStructure);
+        }
+
+        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if(closestHostile) {
+            tower.attack(closestHostile);
+        }
+    }
+```
+_Note: Walls don't belong to any player so we need to find them with "FIND\_STRUCTURES"_

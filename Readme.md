@@ -1,5 +1,1 @@
-Test
-
-```js
-//Test codeblock
-```
+#Hamazura Brigade Homeground for screeps scripts
