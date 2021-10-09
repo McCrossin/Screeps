@@ -17,7 +17,7 @@ var SpawnCreeps = {
             console.log('Spawning new harvester: ' + newHarvesterName);
             Game.spawns[SpawnName].spawnCreep([WORK,CARRY,MOVE], newHarvesterName, 
                 {memory: {role: 'harvester'}});        
-        }else if(upgraders.length < 1){
+        }else if(upgraders.length < 2){
             var newUpgraderName = 'Upgrader' + Game.time;
             console.log('Spawning new upgrader: ' + newUpgraderName);
             Game.spawns[SpawnName].spawnCreep([WORK,CARRY,MOVE], newUpgraderName,

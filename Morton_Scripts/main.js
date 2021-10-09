@@ -1,7 +1,8 @@
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
-const SpawnCreeps = require('./SpawnCreeps');
+var SpawnCreeps = require('SpawnCreeps');
+var ExpectedNumCreeps = 4
 
 module.exports.loop = function () {
 
@@ -12,18 +13,18 @@ module.exports.loop = function () {
         }
     }
 
+    var NumCreeps = _.size(Memory.creeps)
+
     for(var name in Game.rooms) {
-        var energyAvailable = Game.rooms[name].energyAvailable'
+        var energyAvailable = Game.rooms[name].energyAvailable;
         console.log('Room "'+name+'" has '+ energyAvailable +' energy');
         
         for(const i in Game.spawns) {
-            if(energyAvailable >= 200){
+            if((energyAvailable >= 200) && (NumCreeps < ExpectedNumCreeps)){
                 SpawnCreeps.run(i);
             }
         }
     }
-    
-    
     
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
