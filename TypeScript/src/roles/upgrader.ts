@@ -6,8 +6,11 @@ export function roleUpgrader(creep:Creep) {
         }
     }
     else {
-        if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(creep.room.controller);
+        var controller = creep.room.controller
+        if(controller){
+            if(creep.upgradeController(controller) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(controller);
+            }
         }
     }
 }

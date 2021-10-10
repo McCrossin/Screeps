@@ -19,6 +19,7 @@ declare global {
 
   interface CreepMemory {
     role: string;
+    room: string;
     building: boolean;
 
   }
@@ -40,7 +41,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
   if(harvesters.length < 2) {
     var newName = 'Harvester' + harvesters.length;
     Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,MOVE], newName,
-      {memory: {role: 'Harvester',building:false}});
+      {memory: {role: 'Harvester',room:'Spawn1',building:false}});
   }
 
   for(const name in Game.creeps){
