@@ -12,7 +12,7 @@ export function smallCreeps(SpawnName:string) {
             var newHarvesterName = 'Harvester' + Game.time;
             console.log('Spawning new harvester: ' + newHarvesterName);
             Game.spawns[SpawnName].spawnCreep([WORK,CARRY,MOVE], newHarvesterName, 
-                {memory: {role: 'harvester'});        
+                {memory: {role: 'harvester'}});        
         }else if(upgraders.length < 3){
             var newUpgraderName = 'Upgrader' + Game.time;
             console.log('Spawning new upgrader: ' + newUpgraderName);
@@ -27,7 +27,7 @@ export function smallCreeps(SpawnName:string) {
         
         
 
-	},
+	}
 
 export function mediumCreeps(SpawnName:string) {
 
@@ -55,14 +55,5 @@ export function mediumCreeps(SpawnName:string) {
             console.log('Spawning new buidler: ' + newBuilderName);
             Game.spawns[SpawnName].spawnCreep([WORK,CARRY,MOVE], newBuilderName,
                 {memory: {role: 'builder'}})
-        }
-        
-        if(Game.spawns[SpawnName].spawning) { 
-            var spawningCreep = Game.creeps[Game.spawns[SpawnName].spawning.name];
-            Game.spawns[SpawnName].room.visual.text(
-                '🛠️' + spawningCreep.memory.role,
-                Game.spawns[SpawnName].pos.x + 1, 
-                Game.spawns[SpawnName].pos.y, 
-                {align: 'left', opacity: 0.8});
         }
 }
