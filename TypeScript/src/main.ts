@@ -52,7 +52,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
       roleHarvester(creep);
     }
     if(creep.memory.role == "Builder"){
-      roleHarvester(creep);
+      roleBuilder(creep);
     }    
   }
 
