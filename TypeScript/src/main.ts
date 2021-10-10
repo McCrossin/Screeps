@@ -4,7 +4,6 @@ import { roleBuilder } from "roles/builder";
 import { roleUpgrader } from "roles/upgrader";
 import {drawUI } from "UI/drawUI";
 import { smallCreeps,mediumCreeps } from "spawnCreeps";
-var ExpectedNumCreeps = 6
 
 declare global {
   /*
@@ -51,12 +50,12 @@ export const loop = ErrorMapper.wrapLoop(() => {
     for(const i in Game.spawns) {
 
         if(energyCapacity < 600){
-            if((energyAvailable >= 200) && (NumCreeps < ExpectedNumCreeps)){
+            if(energyAvailable >= 200){
                 smallCreeps(i);
             }
         }else if(energyCapacity < 1200){
 
-            if((energyAvailable >= 600) && (NumCreeps < ExpectedNumCreeps)){
+            if(energyAvailable >= 600){
                 mediumCreeps(i);
             }
         }

@@ -8,7 +8,7 @@ export function smallCreeps(SpawnName:string) {
     var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
     //console.log('Builders: ' + builders.length);
 
-    if(harvesters.length < 2) {
+    if(harvesters.length < 3) {
         var newHarvesterName = 'Harvester' + Game.time;
         console.log('Spawning new harvester: ' + newHarvesterName);
         Game.spawns[SpawnName].spawnCreep([WORK,CARRY,MOVE], newHarvesterName, 
@@ -18,7 +18,7 @@ export function smallCreeps(SpawnName:string) {
         console.log('Spawning new upgrader: ' + newUpgraderName);
         Game.spawns[SpawnName].spawnCreep([WORK,CARRY,MOVE], newUpgraderName,
             {memory: {role: 'upgrader'}})
-    }else if(builders.length < 1){
+    }else if(builders.length < 2){
         var newBuilderName = 'Builder' + Game.time;
         console.log('Spawning new buidler: ' + newBuilderName);
         Game.spawns[SpawnName].spawnCreep([WORK,CARRY,MOVE], newBuilderName,
