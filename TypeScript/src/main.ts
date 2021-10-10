@@ -24,7 +24,11 @@ declare global {
     role: string;
     room?: string;
     building?: boolean;
+<<<<<<< HEAD
     upgrading?: boolean;
+=======
+    energySource?: string;
+>>>>>>> 0dad9e0b2da6c2a7d550f5337b5c6b40877cd09c
   }
 
   // Syntax for adding proprties to `global` (ex "global.log")
@@ -81,7 +85,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
   // Automatically delete memory of missing creeps
   if(Game.time % 100 === 0) {
-    console.log("Clearing");
+    console.log("Clearing creep mem");
     for (const name in Memory.creeps) {
       if (!(name in Game.creeps)) {
         delete Memory.creeps[name];
