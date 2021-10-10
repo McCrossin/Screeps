@@ -24,6 +24,7 @@ declare global {
     role: string;
     room?: string;
     building?: boolean;
+    upgrading?: boolean;
   }
 
   // Syntax for adding proprties to `global` (ex "global.log")
