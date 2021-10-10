@@ -2,6 +2,7 @@ import { ErrorMapper } from "utils/ErrorMapper";
 import { roleHarvester } from "roles/harvester";
 import { roleBuilder } from "roles/builder";
 import { roleUpgrader } from "roles/upgrader";
+
 declare global {
   /*
     Example types, expand on these or remove them and add your own.
