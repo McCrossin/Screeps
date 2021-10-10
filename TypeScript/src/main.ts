@@ -2,6 +2,7 @@ import { ErrorMapper } from "utils/ErrorMapper";
 import { roleHarvester } from "roles/harvester";
 import { roleBuilder } from "roles/builder";
 import { roleUpgrader } from "roles/upgrader";
+import { smallCreeps,mediumCreeps } from "spawnCreeps";
 
 declare global {
   /*
@@ -37,36 +38,29 @@ declare global {
 export const loop = ErrorMapper.wrapLoop(() => {
 
   var NumCreeps = _.size(Memory.creeps)
-  /**
+
   for(var name in Game.rooms) {
+    
     var energyAvailable = Game.rooms[name].energyAvailable;
     var energyCapacity = Game.rooms[name].energyCapacityAvailable;
+    
     console.log('Room "'+name+'" has '+ energyAvailable + '/' + energyCapacity + ' energy');
+    var ExpectedNumCreeps = 10
     
     for(const i in Game.spawns) {
 
         if(energyCapacity < 600){
             if((energyAvailable >= 200) && (NumCreeps < ExpectedNumCreeps)){
-                SpawnCreeps.smallCreeps(i);
+                smallCreeps(i);
             }
         }else if(energyCapacity < 1200){
 
             if((energyAvailable >= 600) && (NumCreeps < ExpectedNumCreeps)){
-                SpawnCreeps.mediumCreeps(i);
+                mediumCreeps(i);
             }
-        }
-        
-        if(Game.spawns[i].spawning) {
-            var spawningCreep = Game.creeps[Game.spawns[i].spawning.name];
-            Game.spawns[i].room.visual.text(
-                '🛠️' + spawningCreep.memory.role,
-                Game.spawns[i].pos.x + 1, 
-                Game.spawns[i].pos.y, 
-                {align: 'left', opacity: 0.8});
         }
     }
   }
-  */
 
   for(var name in Game.creeps) {
     var creep = Game.creeps[name];
