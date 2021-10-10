@@ -2,6 +2,7 @@ import { ErrorMapper } from "utils/ErrorMapper";
 import { roleHarvester } from "roles/harvester";
 import { roleBuilder } from "roles/builder";
 import { roleUpgrader } from "roles/upgrader";
+import {drawUI } from "UI/drawUI";
 import { smallCreeps,mediumCreeps } from "spawnCreeps";
 
 declare global {
@@ -41,25 +42,27 @@ export const loop = ErrorMapper.wrapLoop(() => {
   var NumCreeps = _.size(Memory.creeps)
 
   for(var name in Game.rooms) {
-    
-    var energyAvailable = Game.rooms[name].energyAvailable;
-    var energyCapacity = Game.rooms[name].energyCapacityAvailable;
-    
-    console.log('Room "'+name+'" has '+ energyAvailable + '/' + energyCapacity + ' energy');
-    var ExpectedNumCreeps = 10
+
+    var CurrentRoom = Game.rooms[name];
+
+    var energyAvailable = CurrentRoom.energyAvailable;
+    var energyCapacity = CurrentRoom.energyCapacityAvailable;
     
     for(const i in Game.spawns) {
 
         if(energyCapacity < 600){
-            if((energyAvailable >= 200) && (NumCreeps < ExpectedNumCreeps)){
+            if(energyAvailable >= 200){
                 smallCreeps(i);
             }
         }else if(energyCapacity < 1200){
 
-            if((energyAvailable >= 600) && (NumCreeps < ExpectedNumCreeps)){
+            if(energyAvailable >= 600){
                 mediumCreeps(i);
             }
         }
+
+        drawUI(Game.spawns[i], energyAvailable, energyCapacity);
+
     }
   }
 
