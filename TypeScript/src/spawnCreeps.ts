@@ -12,7 +12,7 @@ export function smallCreeps(SpawnName:string) {
             var newHarvesterName = 'Harvester' + Game.time;
             console.log('Spawning new harvester: ' + newHarvesterName);
             Game.spawns[SpawnName].spawnCreep([WORK,CARRY,MOVE], newHarvesterName, 
-                {memory: {role: 'harvester'}});        
+                {memory: {role: 'harvester'});        
         }else if(upgraders.length < 3){
             var newUpgraderName = 'Upgrader' + Game.time;
             console.log('Spawning new upgrader: ' + newUpgraderName);
