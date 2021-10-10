@@ -4,7 +4,7 @@ import { roleBuilder } from "roles/builder";
 import { roleUpgrader } from "roles/upgrader";
 import {drawUI } from "UI/drawUI";
 import { smallCreeps,mediumCreeps } from "spawnCreeps";
-
+import { getEnergySourceExposedFaces } from "roomManagement";
 declare global {
   /*
     Example types, expand on these or remove them and add your own.
@@ -45,7 +45,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
   for(var name in Game.rooms) {
 
     var CurrentRoom = Game.rooms[name];
-
+    getEnergySourceExposedFaces(CurrentRoom);
     var energyAvailable = CurrentRoom.energyAvailable;
     var energyCapacity = CurrentRoom.energyCapacityAvailable;
     

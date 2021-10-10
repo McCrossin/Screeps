@@ -1,3 +1,3 @@
-export function getEnergySourceExposedFaces(room:Room,energySourceID:string){
-    energySource = ""
+export function getEnergySourceExposedFaces(room:Room){
+    console.log("XXX")
 }
