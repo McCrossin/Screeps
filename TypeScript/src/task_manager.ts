@@ -22,7 +22,7 @@ export function roleHarvester(creep:Creep) {
     }
 }
 
-class TaskRequest {
+/**class TaskRequest {
     task: TaskAction;
     status: "PENDING"|"INPROCESS"|"COMPLETE";
 }
@@ -34,3 +34,4 @@ class TaskPrerequisite {
     meets: (creep: Creep) => boolean; // Does minion meet prerequisite?
     toMeet: (creep: Creep) => TaskAction[]; // What would it take for minion to meet prerequisite?
 }
+**/
