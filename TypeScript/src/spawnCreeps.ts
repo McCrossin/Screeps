@@ -24,7 +24,7 @@ export function smallCreeps(SpawnName:string) {
         Game.spawns[SpawnName].spawnCreep([WORK,CARRY,MOVE], newBuilderName,
             {memory: {role: 'builder'}})
     }
-	}
+}
 
 export function mediumCreeps(SpawnName:string) {
 
