@@ -21,7 +21,6 @@ declare global {
     role: string;
     room: string;
     building: boolean;
-
   }
 
   // Syntax for adding proprties to `global` (ex "global.log")
@@ -36,27 +35,49 @@ declare global {
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
 export const loop = ErrorMapper.wrapLoop(() => {
 
-  var harvesters = _.filter(Game.creeps, (creep:Creep) => creep.memory.role == 'Harvester');
+  var NumCreeps = _.size(Memory.creeps)
+  /**
+  for(var name in Game.rooms) {
+    var energyAvailable = Game.rooms[name].energyAvailable;
+    var energyCapacity = Game.rooms[name].energyCapacityAvailable;
+    console.log('Room "'+name+'" has '+ energyAvailable + '/' + energyCapacity + ' energy');
+    
+    for(const i in Game.spawns) {
 
-  if(harvesters.length < 2) {
-    var newName = 'Harvester' + harvesters.length;
-    Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,MOVE], newName,
-      {memory: {role: 'Harvester',room:'Spawn1',building:false}});
+        if(energyCapacity < 600){
+            if((energyAvailable >= 200) && (NumCreeps < ExpectedNumCreeps)){
+                SpawnCreeps.smallCreeps(i);
+            }
+        }else if(energyCapacity < 1200){
+
+            if((energyAvailable >= 600) && (NumCreeps < ExpectedNumCreeps)){
+                SpawnCreeps.mediumCreeps(i);
+            }
+        }
+        
+        if(Game.spawns[i].spawning) {
+            var spawningCreep = Game.creeps[Game.spawns[i].spawning.name];
+            Game.spawns[i].room.visual.text(
+                '🛠️' + spawningCreep.memory.role,
+                Game.spawns[i].pos.x + 1, 
+                Game.spawns[i].pos.y, 
+                {align: 'left', opacity: 0.8});
+        }
+    }
   }
+  */
 
-  for(const name in Game.creeps){
-
+  for(var name in Game.creeps) {
     var creep = Game.creeps[name];
-
-    if(creep.memory.role == "Harvester"){
-      roleHarvester(creep);
+    if(creep.memory.role == 'harvester') {
+        roleHarvester(creep);
     }
-    if(creep.memory.role == "Builder"){
-      roleBuilder(creep);
+    if(creep.memory.role == 'upgrader') {
+        roleUpgrader(creep);
     }
-    if(creep.memory.role == "Upgrader"){
-      roleUpgrader(creep);
-    }        
+    if(creep.memory.role == 'builder') {
+        roleBuilder(creep);
+    }
   }
 
   // Automatically delete memory of missing creeps
