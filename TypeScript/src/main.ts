@@ -1,7 +1,7 @@
 import { ErrorMapper } from "utils/ErrorMapper";
 import { roleHarvester } from "roles/harvester";
 import { roleBuilder } from "roles/builder";
-
+import { roleUpgrader } from "roles/upgrader";
 declare global {
   /*
     Example types, expand on these or remove them and add your own.
@@ -53,7 +53,10 @@ export const loop = ErrorMapper.wrapLoop(() => {
     }
     if(creep.memory.role == "Builder"){
       roleBuilder(creep);
-    }    
+    }
+    if(creep.memory.role == "Upgrader"){
+      roleUpgrader(creep);
+    }        
   }
 
   // Automatically delete memory of missing creeps
@@ -65,3 +68,4 @@ export const loop = ErrorMapper.wrapLoop(() => {
       }
     }}
 });
+
