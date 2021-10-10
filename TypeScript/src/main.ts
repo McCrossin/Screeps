@@ -58,13 +58,12 @@ export const loop = ErrorMapper.wrapLoop(() => {
   for(var name in Game.rooms) {
     var CurrentRoom = Game.rooms[name];
     
-    // Init for Room Sources
+    // Init for Room Source
     if(!CurrentRoom.memory.sources){
       console.log("init sources for: "+name)
       CurrentRoom.memory.sources=[]
-      mapRoomSources(CurrentRoom);
     }
-
+    mapRoomSources(CurrentRoom);
     var energyAvailable = CurrentRoom.energyAvailable;
     var energyCapacity = CurrentRoom.energyCapacityAvailable;
     

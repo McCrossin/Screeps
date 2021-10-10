@@ -22,14 +22,14 @@ export function mapRoomSources(room:Room){
                 }
             }
         }
-        let roomSourceInfo=Game.rooms[room.name].memory.sources
+        let roomSourceInfo=room.memory.sources
         
         let exists = roomSourceInfo.findIndex((SourceInfo:SourceInfo) => {return SourceInfo.id == source.id})
 
         if(exists != -1){
             roomSourceInfo[exists]={id:source.id,capacity:capacity}
         }else{
-            let final = {id:source.id,capacity:capacity};
+            roomSourceInfo.push({id:source.id,capacity:capacity})
         }
     }
 }
