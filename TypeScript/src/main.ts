@@ -1,5 +1,5 @@
 import { ErrorMapper } from "utils/ErrorMapper";
-import { roleHarvester } from "task_manager";
+import { roleHarvester } from "roles/harvester";
 
 declare global {
   /*
