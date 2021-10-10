@@ -23,7 +23,7 @@ declare global {
   }
 
   interface SourceInfo {
-    id: string,
+    id: Id<Source>,
     capacity?: number,
     cost?: number
   }
@@ -37,7 +37,7 @@ declare global {
     room?: string;
     building?: boolean;
     upgrading?: boolean;
-    energySource?: string;
+    energySource?: Id<Source>;
   }
 
   // Syntax for adding proprties to `global` (ex "global.log")
@@ -62,8 +62,9 @@ export const loop = ErrorMapper.wrapLoop(() => {
     if(!CurrentRoom.memory.sources){
       console.log("init sources for: "+name)
       CurrentRoom.memory.sources=[]
+      mapRoomSources(CurrentRoom);
     }
-    mapRoomSources(CurrentRoom);
+    
     var energyAvailable = CurrentRoom.energyAvailable;
     var energyCapacity = CurrentRoom.energyCapacityAvailable;
     
