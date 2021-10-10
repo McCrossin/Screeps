@@ -42,7 +42,7 @@ export function mediumCreeps(SpawnName:string) {
         console.log('Spawning new harvester: ' + newHarvesterName);
         Game.spawns[SpawnName].spawnCreep([WORK,WORK,WORK,CARRY,MOVE,MOVE], newHarvesterName, 
             {memory: {role: 'harvester'}});        
-    }else if(upgraders.length < 3){
+    }else if(upgraders.length < 1){
         var newUpgraderName = 'Upgrader' + Game.time;
         console.log('Spawning new upgrader: ' + newUpgraderName);
         Game.spawns[SpawnName].spawnCreep([WORK,WORK,WORK,CARRY,MOVE,MOVE], newUpgraderName,
