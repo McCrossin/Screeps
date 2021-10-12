@@ -13,7 +13,10 @@ export function roleHarvester(creep:Creep) {
         let energySource = creep.memory.energySource
         if(energySource != undefined){
             let dst = Game.getObjectById(energySource)
-            if(dst != null){moveToSpecificEnergySource(creep,dst)}else{
+            if(dst != null){
+                moveToSpecificEnergySource(creep,dst)
+            }
+            else{
                 var sources = creep.room.find(FIND_SOURCES);
                 moveToSpecificEnergySource(creep,sources[0])
             }
