@@ -5,8 +5,8 @@ import { roleUpgrader } from "roles/upgrader";
 import {drawUI } from "UI/drawUI";
 import { smallCreeps,mediumCreeps } from "spawnCreeps";
 import { mapRoomSources } from "roomManagement";
-import { Dictionary } from "lodash";
-import { KeyFormat } from "crypto";
+import {loops} from "loops"
+import { stringify } from "querystring";
 declare global {
   /*
     Example types, expand on these or remove them and add your own.
@@ -17,9 +17,15 @@ declare global {
     Interfaces matching on name from @types/screeps will be merged. This is how you can extend the 'built-in' interfaces from @types/screeps.
   */
   // Memory extension samples
+
+  interface OwnedRoomsMemory {
+    name: string
+  }
+
   interface Memory {
     uuid: number;
     log: any;
+    OwnedRooms: {[name:string]:OwnedRoomsMemory}
   }
 
   interface SourceInfo {
@@ -37,7 +43,6 @@ declare global {
     room?: string;
     building?: boolean;
     upgrading?: boolean;
-    energySource?: Id<Source>;
   }
 
   // Syntax for adding proprties to `global` (ex "global.log")
@@ -47,26 +52,23 @@ declare global {
     }
   }
 }
-
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
-
 export const loop = ErrorMapper.wrapLoop(() => {
-
-  var NumCreeps = _.size(Memory.creeps)
-
+  
   for(var name in Game.rooms) {
     var CurrentRoom = Game.rooms[name];
-    
     // Init for Room Source
     if(!CurrentRoom.memory.sources){
       console.log("init sources for: "+name)
       CurrentRoom.memory.sources=[]
       mapRoomSources(CurrentRoom);
     }
-    
+  }
 
+  loops()
 
+    /**
     var energyAvailable = CurrentRoom.energyAvailable;
     var energyCapacity = CurrentRoom.energyCapacityAvailable;
     
@@ -87,11 +89,12 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
     }
   }
-
+  */
+  /**
   for(var name in Game.creeps) {
     var creep = Game.creeps[name];
     if(creep.memory.role == 'harvester') {
-        roleHarvester(creep);
+        //roleHarvester(creep);
     }
     if(creep.memory.role == 'upgrader') {
         roleUpgrader(creep);
@@ -109,5 +112,6 @@ export const loop = ErrorMapper.wrapLoop(() => {
         delete Memory.creeps[name];
       }
     }}
+    */
 });
 
