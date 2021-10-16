@@ -9,14 +9,14 @@ import { worker } from "cluster";
 export class upgradePramga extends Pragma {
     
     shouldSpawn(OwnedRoom:string){
-        if(this.minions(OwnedRoom).length < 2) return true
-        return false
+        if(this.minions(OwnedRoom).length > 2) return false
+            return true
     }
 
     spawn(){
         for (let id in Memory.OwnedRooms){
             
-            if(this.shouldSpawn(id)){
+            if(this.shouldSpawn(id) == true){
                 spawnRole(
                     id,
                     this.id,
