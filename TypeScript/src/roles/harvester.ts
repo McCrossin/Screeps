@@ -1,15 +1,15 @@
 export function roleHarvester(creep:Creep) {
 
-    if(creep.memory.upgrading && creep.store[RESOURCE_ENERGY] == 0) {
-        creep.memory.upgrading = false;
+    if(creep.memory.harvesting && creep.store[RESOURCE_ENERGY] == 0) {
+        creep.memory.harvesting = false;
         creep.say('🔄 harvest');
     }
-    if(!creep.memory.upgrading && creep.store.getFreeCapacity() == 0) {
-        creep.memory.upgrading = true;
-        creep.say('⬆️ Upgrade');
+    if(!creep.memory.harvesting && creep.store.getFreeCapacity() == 0) {
+        creep.memory.harvesting = true;
+        creep.say('Storing');
     }
 
-    if(!creep.memory.upgrading) {
+    if(!creep.memory.harvesting) {
         let energySource = creep.memory.energySource
         if(energySource != undefined){
             let dst = Game.getObjectById(energySource)

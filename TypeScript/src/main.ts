@@ -37,6 +37,7 @@ declare global {
     room?: string;
     building?: boolean;
     upgrading?: boolean;
+    harvesting?: boolean;
     energySource?: Id<Source>;
   }
 
