@@ -66,6 +66,8 @@ export const loop = ErrorMapper.wrapLoop(() => {
       mapRoomSources(CurrentRoom);
     }
     
+
+
     var energyAvailable = CurrentRoom.energyAvailable;
     var energyCapacity = CurrentRoom.energyCapacityAvailable;
     
