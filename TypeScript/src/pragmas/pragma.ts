@@ -18,7 +18,7 @@ export abstract class Pragma {
         return c.memory.OwnedRoom
     }
     public assigned: Id<Creep>[] = [];
-    constructor(){
+    constructor(public priority: number =5){
         this.id=this.constructor.name
     }
 

@@ -4,13 +4,12 @@ import { getEnergyFromSource } from "routine/getEnergyFromSource";
 import { routineResult } from "routine/routineResult";
 import { spawnRole } from "roles/spawnRole";
 import { roles, RoleTypes } from "roles/roleTypes";
-import { worker } from "cluster";
 
 export class upgradePramga extends Pragma {
     
     shouldSpawn(OwnedRoom:string){
         if(this.minions(OwnedRoom).length > 2) return false
-            return true
+        return true
     }
 
     spawn(){
@@ -42,8 +41,9 @@ export class upgradePramga extends Pragma {
         if(creep.memory.state == States.WORKING){
             let controller = creep.room.controller
             if(!controller) return;
-            creep.moveTo(controller, {visualizePathStyle: {stroke: '#ffffff'}});
+            
             let result=creep.upgradeController(controller)
+            if(result == ERR_NOT_IN_RANGE)creep.moveTo(controller, {visualizePathStyle: {stroke: '#ffffff'}});
             if (result == ERR_NOT_ENOUGH_ENERGY) setState(States.GET_ENERGY)(creep);
         }
     }

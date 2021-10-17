@@ -11,7 +11,6 @@ export function roomScanner(){
 
     for (let roomId in Game.rooms){
 
-
         Memory.OwnedRooms ??= {}
         if(Game.rooms[roomId].controller?.my){
             if(!Memory.OwnedRooms[roomId]){

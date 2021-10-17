@@ -18,9 +18,10 @@ export function init(...args:Pragma[]){
             PriorityPragmas.push(pragma)
         }
     }
+    PriorityPragmas.sort((a,b)=> b.priority - a.priority)
 }
 
 init(
-    new upgradePramga()
+    new upgradePramga(5)
 )
 global.Pragmas = Pragmas

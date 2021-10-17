@@ -5,6 +5,5 @@ export function runCreepPragmas(creep:Creep){
     if(!Pragmas[creep.memory.Pragma].assigned.includes(creep.id)){
         Pragmas[creep.memory.Pragma].assigned.push(creep.id)
     }
-
     Pragmas[creep.memory.Pragma].action(creep)
 }

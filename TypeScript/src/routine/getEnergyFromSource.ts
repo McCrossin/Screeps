@@ -1,3 +1,4 @@
+import { Pragmas } from "pragmas/pragma";
 import { routineResult } from "./routineResult";
 
 declare global {
@@ -6,14 +7,16 @@ declare global {
     }
 }
 
-export function getEnergyFromSource(creep:Creep,OwnedRoom:string){
-    
+export function getEnergyFromSource(creep:Creep,OwnedRoom:string,sourceId?:Id<Source>){
+    if(!creep.memory.energySource){
+        creep.memory.energySource = sourceId
+    }
+
     let energySourceTarget = Game.getObjectById(creep.memory.energySource as Id<Source>)
     
     if (energySourceTarget?.energy === 0){
         delete creep.memory.energySource
         return routineResult.FAILURE
-
     }
 
 
