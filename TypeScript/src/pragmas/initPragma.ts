@@ -1,3 +1,4 @@
+import { builderPramga } from "./BuilderPragma";
 import { Pragma, Pragmas } from "./pragma";
 import { upgradePramga } from "./UpgradePragma";
 
@@ -22,6 +23,7 @@ export function init(...args:Pragma[]){
 }
 
 init(
-    new upgradePramga(5)
+    new upgradePramga(5),
+    new builderPramga(4)
 )
 global.Pragmas = Pragmas
