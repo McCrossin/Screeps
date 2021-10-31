@@ -17,7 +17,7 @@ interface Graph {
     terminalEdges: Array<terminalEdge>
 }
 
-export function minimumCut(room:Room){
+export function minimumCutGraph(room:Room){
 
     let roomArea = room.lookAtArea(0,0,50,50,true)
     let notWalls = roomArea.filter((i)=>!(i.terrain == 'wall'))
@@ -73,7 +73,7 @@ export function minimumCut(room:Room){
             }
         }
     }
-    // mark a point as being unavailable for removal
+    // mark a point as unavailable for removal
     function disable(a:number,b:number){
         graph.edges.push({
             top:{x:a,y:b},
@@ -81,7 +81,7 @@ export function minimumCut(room:Room){
             capacity:Inf
         })
     }
-    // mark a point as being a potential entrance
+    // mark a point as a potential entrance
     function add_sink(a:number,b:number){
         let index = graph.vertices.find((i)=>{
             return i.pos.x == a && i.pos.y == b
@@ -96,7 +96,7 @@ export function minimumCut(room:Room){
             disable(a,b)
         }
     }
-    // mark a point as needing to be protected
+    // mark a point be protected
     function add_source(a:number,b:number){
         let index = graph.vertices.find((i)=>{
             return i.pos.x == a && i.pos.y == b

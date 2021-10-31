@@ -34,6 +34,14 @@ export function roomScanner(){
     for (let roomId in Game.rooms){
         let currentRoom=Game.rooms[roomId]
         if(currentRoom.controller?.my){
+            // name the room randomly
+            Memory.OwnedRooms ??= {}
+            if(!Memory.OwnedRooms[roomId]){
+                
+                Memory.OwnedRooms[roomId] = {
+                    name: spawnNames.find(name =>!Object.values(Memory.OwnedRooms).some(r => r.name ===name)) ?? roomId,
+                }
+            }
             //create a distance transform map
             Memory.OwnedRooms[roomId].distanceTransform ??= []
             if(!Memory.OwnedRooms[roomId].distanceTransform){
@@ -44,14 +52,6 @@ export function roomScanner(){
                 currentRoom.memory.sources ??=[]
                 mapRoomSources(currentRoom);
               }
-            // name the room randomly
-            Memory.OwnedRooms ??= {}
-            if(!Memory.OwnedRooms[roomId]){
-                
-                Memory.OwnedRooms[roomId] = {
-                    name: spawnNames.find(name =>!Object.values(Memory.OwnedRooms).some(r => r.name ===name)) ?? roomId,
-                }
-            }
             // generate road paths to sources
             Memory.OwnedRooms[roomId].roads ??=[]
             if(currentRoom.memory.sources){

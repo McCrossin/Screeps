@@ -9,8 +9,6 @@ declare global{
     }
 }
 
-
-
 export function distanceTransform(room:Room){
     let roomscan = room.lookAtArea(0,0,50,50,true)
     let walls = roomscan.filter((loc) => (loc.type == 'terrain' && loc.terrain == 'wall'))
