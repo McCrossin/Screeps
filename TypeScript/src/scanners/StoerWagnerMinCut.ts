@@ -1,5 +1,5 @@
 // Adapted from https://github.com/thomasjungblut/tjungblut-graph/
-class vertice {
+export class vertice {
     private id:string
     private value:string
 
@@ -30,7 +30,7 @@ class vertice {
     }
 }
 
-class edge {
+export class edge {
     private dst:string
     private weight:number
 
@@ -63,7 +63,7 @@ class edge {
     }
 }
 
-class Graph {
+export class Graph {
     private verticeSet:Set<vertice> = new Set()
     private verticeMap:Map<string,vertice> = new Map()
     private adjacencyMap:Map<string,Array<string>> = new Map()
@@ -128,13 +128,13 @@ class Graph {
     }
 }
 
-interface cutOfThePhase {
+export interface cutOfThePhase {
     t:string,
     s:string,
     w:number
 }
 
-interface MinCutResult {
+export interface MinCutResult {
     first:Graph,
     second:Graph,
     edgesOnTheCut:Array<[string,edge]>,
@@ -309,7 +309,7 @@ function minimumCutResult(g:Graph,partition:Set<string>|null,bestcut:cutOfThePha
     return r
 }
 
-function minimumCut(g:Graph){
+export function minimumCut(g:Graph){
     let originalGraph = g
     let currentPartition: Set<string> = new Set()
     let currentBestPartition:Set<string> | null = null

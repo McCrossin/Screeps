@@ -1,52 +1,34 @@
-interface edge{
-    top: {x:number,y:number},
-    bottom: {x:number,y:number},
-    capacity: number
-
-}
-interface terminalEdge{
-    pos: {x:number,y:number}
-    capacity:number
-}
-interface vertice{
-    pos: {x:number,y:number}
-}
-interface Graph {
-    vertices: Array<vertice>,
-    edges: Array<edge>
-    terminalEdges: Array<terminalEdge>
-}
-
-export function minimumCutGraph(room:Room){
+import { minimumCut } from "./StoerWagnerMinCut"
+import { Graph } from "./StoerWagnerMinCut"
+import { vertice } from "./StoerWagnerMinCut"
+import { edge } from "./StoerWagnerMinCut"
+/**
+export function MakeRoomGraph(room:Room){
 
     let roomArea = room.lookAtArea(0,0,50,50,true)
     let notWalls = roomArea.filter((i)=>!(i.terrain == 'wall'))
     let exits = room.find(FIND_EXIT)
 
     let Inf = 10 ** 4
-    let graph:Graph={vertices:[],edges:[],terminalEdges:[]}
+    let graph=new Graph()
 
     let graphHeight = notWalls.length * 2
     let graphwidth = notWalls.length
 
-    let topVerticies = Array.from(roomArea,(i)=>{return [i.x,i.y]})
-    let bottomVerticies = Array.from(roomArea,(i)=>{return [i.x,i.y]})
+    let Verticies = Array.from(roomArea,(i)=>{return [i.x,i.y]})
     // add all verticies to graph
-    for( let i in topVerticies){
-        let x=topVerticies[i]
-        graph.vertices.push({pos:{x:x[0],y:x[1]}})
-    }
-    for( let i in bottomVerticies){
-        let x=bottomVerticies[i]
-        graph.vertices.push({pos:{x:x[0],y:x[1]}})
+    for( let i in Verticies){
+        let x=Verticies[i]
+        graph.addVertice(new vertice("T"+x[0]+","+x[1],x[0]+","+x[1]))
+        graph.addVertice(new vertice("B"+x[0]+","+x[1],x[0]+","+x[1]))
     }
     // Add edges to graph
+    let VerticeID =Array.from(graph.getVerticeIDSet())
+
     for (let a = 0; a < 50; a++) {
         for (let b = 0; b < 50; b++) {
             // ignore the square if its not passable
-            let ignore = graph.vertices.find((i)=>{
-                return i.pos.x == a && i.pos.y == b
-            });
+            let ignore = VerticeID.includes("")
             if(ignore == undefined) continue;
             // add top to bottom edges
             graph.edges.push({
@@ -72,43 +54,31 @@ export function minimumCutGraph(room:Room){
                 }
             }
         }
-    }
-    // mark a point as unavailable for removal
-    function disable(a:number,b:number){
-        graph.edges.push({
-            top:{x:a,y:b},
-            bottom:{x:a,y:b},
-            capacity:Inf
-        })
-    }
-    // mark a point as a potential entrance
-    function add_sink(a:number,b:number){
-        let index = graph.vertices.find((i)=>{
-            return i.pos.x == a && i.pos.y == b
-        });
-        if(!index == undefined){
-            graph.terminalEdges.push(
-                {
-                    pos:{x:a,y:b},
-                    capacity:Inf
-                }
-            )
-            disable(a,b)
+    }  
+}
+ */
+export function MakeRoomGraph2(room:Room){
+    let roomArea = room.lookAtArea(0,0,50,50,true)
+    let notWalls = roomArea.filter((i)=>!(i.terrain == 'wall'))
+    let exits = room.find(FIND_EXIT)
+    let graph=new Graph()
+
+    for (let square of notWalls){
+        
+        
+        let vertname=square.x+','+square.y
+        graph.addVertice(new vertice(
+            vertname,vertname))
         }
-    }
-    // mark a point be protected
-    function add_source(a:number,b:number){
-        let index = graph.vertices.find((i)=>{
-            return i.pos.x == a && i.pos.y == b
-        });
-        if(!index == undefined){
-            graph.terminalEdges.push(
-                {
-                    pos:{x:a,y:b},
-                    capacity:Inf
-                }
-            )
-        }
-    }
+        let e:Array<edge>=[]
+        
+
     
+    let vSet=graph.getVerticeIDSet()
+
+
+    for(let v of vSet){
+        let pos = v.split(',')
+        room.visual.text(v,parseInt(pos[0]),parseInt(pos[1]),{font:0.2})       
+    }
 }
