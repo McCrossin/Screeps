@@ -4,6 +4,7 @@ import { GenerateRoads } from "roomplanner/roads"
 import { byId } from "selectors/byId"
 import { spawnNames } from "utils/SpawnNames"
 import { distanceTransform } from "./distancetransform"
+import { MakeRoomGraph2 } from "./minimumCut"
 
 declare global {
     interface OwnedRoomsMemory {
@@ -52,6 +53,7 @@ export function roomScanner(){
                 currentRoom.memory.sources ??=[]
                 mapRoomSources(currentRoom);
               }
+            MakeRoomGraph2(currentRoom)
             // generate road paths to sources
             Memory.OwnedRooms[roomId].roads ??=[]
             if(currentRoom.memory.sources){
