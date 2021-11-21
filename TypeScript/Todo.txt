@@ -1,0 +1,6 @@
+Fix distancetransform.ts call
+
+
+Fix upgrading/harvesting 
+    Add something in memory to say source is closest to controller.
+    Add something in memory to say if source has enough capacity to be valid for upgrading.

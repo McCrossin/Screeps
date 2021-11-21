@@ -1,4 +1,3 @@
-import { max } from "lodash";
 import { roles, RoleTypes } from "roles/roleTypes";
 import { spawnRole } from "roles/spawnRole";
 import { getEnergyFromSource } from "routine/getEnergyFromSource";
@@ -9,11 +8,12 @@ import { Pragma, Pragmas } from "./pragma";
 
 export const OwnedRoomPragmas: Record<string, OwnedRoomPragma> = {};
 
+
 export class OwnedRoomPragma extends Pragma {
     public distance: number = Infinity;
     public disabled = false;
     public constructor(priority: number,public OwnedRoom:string,public sourceId: Id<Source>){
-        super()
+        super(priority)
         this.id = `OwnedRoomPragma|${sourceId}`;
         if(OwnedRoomPragmas[this.id]){
             OwnedRoomPragmas[this.id].setup();
@@ -105,3 +105,5 @@ export class OwnedRoomPragma extends Pragma {
 
     }
 }
+
+// let x = new OwnedRoomPragma(8.5,"test","Test" as Id<Source>);
