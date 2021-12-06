@@ -1,10 +1,11 @@
 
+import { stringify } from "querystring"
 import { mapRoomSources } from "roomManagement"
 import { GenerateRoads } from "roomplanner/roads"
 import { byId } from "selectors/byId"
 import { spawnNames } from "utils/SpawnNames"
 import { distanceTransform } from "./distancetransform"
-import { MakeRoomGraph2 } from "./minimumCut"
+import { new_graph_from_area } from "./minimumCut"
 
 declare global {
     interface OwnedRoomsMemory {
@@ -21,6 +22,7 @@ declare global {
     }
     interface RoomMemory {
         sources: Array<SourceInfo>;
+        Tiles: LookAtResultWithPos<LookConstant>[];
     }
 }
 
@@ -53,7 +55,8 @@ export function roomScanner(){
                 currentRoom.memory.sources ??=[]
                 mapRoomSources(currentRoom);
               }
-            MakeRoomGraph2(currentRoom)
+            new_graph_from_area(currentRoom.lookAtArea(0,10,18,23,true),currentRoom)
+            
             // generate road paths to sources
             Memory.OwnedRooms[roomId].roads ??=[]
             if(currentRoom.memory.sources){

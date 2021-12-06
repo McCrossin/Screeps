@@ -1,84 +1,97 @@
+import { stringify } from "querystring"
 import { minimumCut } from "./StoerWagnerMinCut"
 import { Graph } from "./StoerWagnerMinCut"
 import { vertice } from "./StoerWagnerMinCut"
 import { edge } from "./StoerWagnerMinCut"
-/**
-export function MakeRoomGraph(room:Room){
 
-    let roomArea = room.lookAtArea(0,0,50,50,true)
-    let notWalls = roomArea.filter((i)=>!(i.terrain == 'wall'))
-    let exits = room.find(FIND_EXIT)
+ 
+export function new_graph_from_area(area: LookAtResultWithPos<LookConstant>[],room:Room) {
+    
+    const infinity = 10 ** 8
+    let out_graph = new Graph()
+    let terrain_and_not_walls = area.filter((a) => ( a.type == 'terrain' && a.terrain != 'wall')).sort((a, b) => { return a.y == b.y ? a.x - b.x : a.y - b.y; })
+    let structures = area.filter((a) => ( a.type == 'structure' ))
+    let resources = area.filter((a) => ( a.type == 'resource' ))
 
-    let Inf = 10 ** 4
-    let graph=new Graph()
+    let terrain_lookup: Map<string, {index:number,x:number,y:number}> = new Map()
+    let structure_lookup: Map<string, {index:number,x:number,y:number}> = new Map()
+    let resource_lookup: Map<string, {index:number,x:number,y:number}> = new Map()
+    let directions = [[0, -1], [-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1]]
 
-    let graphHeight = notWalls.length * 2
-    let graphwidth = notWalls.length
-
-    let Verticies = Array.from(roomArea,(i)=>{return [i.x,i.y]})
-    // add all verticies to graph
-    for( let i in Verticies){
-        let x=Verticies[i]
-        graph.addVertice(new vertice("T"+x[0]+","+x[1],x[0]+","+x[1]))
-        graph.addVertice(new vertice("B"+x[0]+","+x[1],x[0]+","+x[1]))
+    for (let i in terrain_and_not_walls) {
+        let e = terrain_and_not_walls[i]
+        let v = `${e.x},${e.y}`
+        terrain_lookup.set(v, {index:parseInt(i),x:e.x,y:e.y})
+        out_graph.addVertice(new vertice(v, v))
     }
-    // Add edges to graph
-    let VerticeID =Array.from(graph.getVerticeIDSet())
 
-    for (let a = 0; a < 50; a++) {
-        for (let b = 0; b < 50; b++) {
-            // ignore the square if its not passable
-            let ignore = VerticeID.includes("")
-            if(ignore == undefined) continue;
-            // add top to bottom edges
-            graph.edges.push({
-                top:{x:a,y:b},
-                bottom:{x:a,y:b},
-                capacity:1
-            })
+    for(let i in structures){
+        let e = structures[i]
+        let v = `${e.x},${e.y}`
+        if(e.structure?.structureType == 'controller'){
+            structure_lookup.set(v, {index:parseInt(i),x:e.x,y:e.y})
+            out_graph.addVertice(new vertice(v, v))
+        }
+    }
 
-            // add top to top edgges to the neighbours
-            for(let [da,db] of [[0, -1], [-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1]]){
-                let a2 = a + da
-                let b2 = b + db
+    for(let i in resources){
+        let e = resources[i]
+        let v = `${e.x},${e.y}`
+        if(out_graph.getVertice(v)){
+            resource_lookup.set(v,{index:parseInt(i),x:e.x,y:e.y})
+        }
+    }
 
-                let check = graph.vertices.find((i)=>{
-                    return i.pos.x == a2 && i.pos.y == b2
-                });
-                if ((0 <= a2 && 50 < a2) && (0 <= b2 && 50 < b2 )){
-                    graph.edges.push({
-                        top:{x:a,y:b},
-                        bottom:{x:a2,y:b2},
-                        capacity:Inf
-                    })                  
-                }
+    function check_edge(x: number, y: number) {
+        if (x == 0 || x == 49 || y == 0 || y == 49) return true
+        return false
+    }
+    
+    let vertex = out_graph.getVerticeIDSet()
+    
+    for (let vId of vertex) {
+        let src_lookup_index = terrain_lookup.get(vId) ==undefined ? structure_lookup.get(vId) : terrain_lookup.get(vId)
+        if (src_lookup_index == undefined)continue
+        // iterate around the x y position
+        for (let d of directions) {
+            // calculate the new coordinate
+            let x2: number = src_lookup_index.x + d[0]
+            let y2: number = src_lookup_index.y + d[1]
+            let dst_vertice = x2 + ',' + y2
+            // check it exists in the graph
+            if (out_graph.getVertice(dst_vertice) != undefined) {
+                let w = 1
+                room.visual.line(src_lookup_index.x,src_lookup_index.y,x2,y2,{lineStyle:'dotted'})
+                out_graph.addEdge(vId, new edge(dst_vertice, w))
             }
         }
-    }  
-}
- */
-export function MakeRoomGraph2(room:Room){
-    let roomArea = room.lookAtArea(0,0,50,50,true)
-    let notWalls = roomArea.filter((i)=>!(i.terrain == 'wall'))
-    let exits = room.find(FIND_EXIT)
-    let graph=new Graph()
-
-    for (let square of notWalls){
-        
-        
-        let vertname=square.x+','+square.y
-        graph.addVertice(new vertice(
-            vertname,vertname))
-        }
-        let e:Array<edge>=[]
-        
-
-    
-    let vSet=graph.getVerticeIDSet()
-
-
-    for(let v of vSet){
-        let pos = v.split(',')
-        room.visual.text(v,parseInt(pos[0]),parseInt(pos[1]),{font:0.2})       
     }
+    let v2 = out_graph.getVerticeIDSet()
+    for (let vId of v2) {
+        let terrain = terrain_lookup.get(vId)
+        let structure = structure_lookup.get(vId)
+
+        let src_lookup_index = terrain ==undefined ? structure : terrain
+        if(src_lookup_index == undefined) continue
+
+        let is_edge = check_edge(src_lookup_index.x,src_lookup_index.y)
+
+        if(src_lookup_index != undefined && terrain == undefined || is_edge != false){
+            out_graph.SetVerticeIncomingWeight(vId,infinity)
+            out_graph.SetVerticeOutgoingWeight(vId,infinity)   
+            room.visual.text(`${src_lookup_index.x},${src_lookup_index.y}`,src_lookup_index.x,src_lookup_index.y,{color:"#FF0000",font:0.2})         
+        }
+    }
+    let result = minimumCut(out_graph)?.edgesOnTheCut
+    if(result){
+        for(let v of result){
+            let pos = v[0].split(',')
+            let x = parseInt(pos[0])
+            let y = parseInt(pos[1])
+            let pos2 = v[1].getDst().split(',')
+            let x2 = parseInt(pos2[0])
+            let y2 = parseInt(pos2[1])
+            room.visual.line(x,y,x2,y2,{color:"#FF0000"})
+        }
+    }    
 }

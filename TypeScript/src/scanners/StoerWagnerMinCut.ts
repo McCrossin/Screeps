@@ -1,29 +1,30 @@
+
 // Adapted from https://github.com/thomasjungblut/tjungblut-graph/
 export class vertice {
-    private id:string
-    private value:string
+    private id: string
+    private value: string
 
-    constructor(id:string,value:string){
+    constructor(id: string, value: string) {
         this.id = id
         this.value = value
     }
-    public getId(){
+    public getId() {
         return this.id
     }
-    public getValue(){
+    public getValue() {
         return this.value
     }
-    public equals(obj:vertice){
-        if(this == obj){
+    public equals(obj: vertice) {
+        if (this == obj) {
             return true
         }
-        if(obj == null){
+        if (obj == null) {
             return false
         }
-        let other:vertice = obj
-        if (this.id ==null && other.id != null){
+        let other: vertice = obj
+        if (this.id == null && other.id != null) {
             return false
-        }else if(this.id != obj.id){
+        } else if (this.id != obj.id) {
             return false
         }
         return true
@@ -31,32 +32,36 @@ export class vertice {
 }
 
 export class edge {
-    private dst:string
-    private weight:number
+    private dst: string
+    private weight: number
 
-    constructor(dst:string,weight:number){
+    constructor(dst: string, weight: number) {
         this.dst = dst
         this.weight = weight
     }
 
-    public getDst(){
+    public getDst() {
         return this.dst
     }
 
-    public getWeight(){
+    public getWeight() {
         return this.weight
     }
 
-    public equals(obj:edge){
-        if(this == obj){
+    public SetWeight(w:number){
+        this.weight = w
+    }
+
+    public equals(obj: edge) {
+        if (this == obj) {
             return true
         }
-        if(obj == null){
+        if (obj == null) {
             return false
         }
-        if (this.dst ==null && obj.dst != null){
+        if (this.dst == null && obj.dst != null) {
             return false
-        }else if(this.dst != obj.dst){
+        } else if (this.dst != obj.dst) {
             return false
         }
         return true
@@ -64,114 +69,146 @@ export class edge {
 }
 
 export class Graph {
-    private verticeSet:Set<vertice> = new Set()
-    private verticeMap:Map<string,vertice> = new Map()
-    private adjacencyMap:Map<string,Array<string>> = new Map()
-    private edgeMap:Map<string,Array<edge>> = new Map()
+    private verticeSet: Set<vertice> = new Set()
+    private verticeMap: Map<string, vertice> = new Map()
+    private adjacencyMap: Map<string, Array<string>> = new Map()
+    private edgeMap: Map<string, Array<edge>> = new Map()
 
-    public getVerticeSet(){
+    public getVerticeSet() {
         return this.verticeSet
     }
-    public getVerticeIDSet(){
+
+    public getVerticeIDSet() {
         return this.verticeMap.keys()
     }
 
-    public addVertice(v:vertice,... e:edge[]){
-        this.verticeSet.add(v)
-        this.verticeMap.set(v.getId(),v)
+    public SetVerticeIncomingWeight(vId:string,w:number){
+        //Grabs all outgoing edges
+        //Gets the destination of the edge and grabs all its outgoing edges
+        //Sets the weight of any edge thats destination is incoming to this vertice
+        let outgoing_edges = this.getEdges(vId)
+        if(outgoing_edges != undefined){
+            for(let outgoing_edge of outgoing_edges){
+                let incoming_edges = this.getEdges(outgoing_edge.getDst())
+                if(incoming_edges !=undefined){
+                    for(let incoming_edge of incoming_edges){
+                        if(incoming_edge.getDst() == vId) incoming_edge.SetWeight(w)
+                    }
+                }
+            }
+        }
+    }
 
-        e.forEach((e)=>{
-            this.addEdge(v.getId(),e)
+    public SetVerticeOutgoingWeight(v:string,w:number){
+        let outgoing = this.getEdges(v)
+        if(outgoing != undefined){
+            for(let e of outgoing){
+                e.SetWeight(w)
+            }
+        }
+    }
+
+    public addVertice(v: vertice, ...e: edge[]) {
+        this.verticeSet.add(v)
+        this.verticeMap.set(v.getId(), v)
+
+        e.forEach((e) => {
+            this.addEdge(v.getId(), e)
         })
     }
 
-    public addEdge(vId:string,e:edge){
+    public addEdge(vId: string, e: edge) {
 
         let currentEdges = this.edgeMap.get(vId)
-        if(currentEdges){
-                currentEdges.push(e)
-            this.edgeMap.set(vId,currentEdges)
-        }else{
-            this.edgeMap.set(vId,[e])
+        if (currentEdges) {
+            currentEdges.push(e)
+            this.edgeMap.set(vId, currentEdges)
+        } else {
+            this.edgeMap.set(vId, [e])
         }
 
         let currentAdjEdges = this.adjacencyMap.get(vId)
-        if(currentAdjEdges){
+        if (currentAdjEdges) {
             currentAdjEdges.push(e.getDst())
-            this.adjacencyMap.set(vId,currentAdjEdges)
-        }else{
-            this.adjacencyMap.set(vId,[e.getDst()])
+            this.adjacencyMap.set(vId, currentAdjEdges)
+        } else {
+            this.adjacencyMap.set(vId, [e.getDst()])
         }
 
     }
 
-    public getEdges(vId:string){
+    public getEdges(vId: string) {
         return this.edgeMap.get(vId)
     }
-    public getEdge(src:string,dst:string):edge|null{
+
+    public getEdge(src: string, dst: string): edge | null {
+        //Gets all outgoing edges
+        //Checks if the destination of an outgoing edge is equal to the input destination
+        
         let set = this.edgeMap.get(src)
         let result = null;
-        if(set != undefined){
-            set.forEach((e)=>{
-                if(e.getDst() == dst)
-                    result =  e
-            })
-        }
+        if (set != undefined) {
+            for(let e of set){
+                if (e.getDst() == dst)
+                result = e
+                }
+            }
         return result
     }
-    public getVertice(vId:string){
+
+    public getVertice(vId: string) {
         return this.verticeMap.get(vId)
     }
 
-    public getNumVertices(){
+    public getNumVertices() {
         return this.verticeSet.size
     }
 }
 
-export interface cutOfThePhase {
-    t:string,
-    s:string,
-    w:number
+interface cutOfThePhase {
+    t: string,
+    s: string,
+    w: number
 }
 
-export interface MinCutResult {
-    first:Graph,
-    second:Graph,
-    edgesOnTheCut:Array<[string,edge]>,
-    cutWeight:number
+interface MinCutResult {
+    first: Graph,
+    second: Graph,
+    edgesOnTheCut: Array<[string, edge]>,
+    cutWeight: number
 }
 
-let graph = new Graph()
-graph.addVertice(new vertice('1', "1"),
+export let demoGraph = new Graph()
+demoGraph.addVertice(new vertice('1', "1"),
 new edge('2', 2),
 new edge('5', 3));
-graph.addVertice(new vertice('2', "2"),
+demoGraph.addVertice(new vertice('2', "2"),
 new edge('1', 2),
 new edge('3', 3),
 new edge('5', 2),
 new edge('6', 2));
-graph.addVertice(new vertice('3', "3"),
+demoGraph.addVertice(new vertice('3', "3"),
 new edge('2', 3),
 new edge('4', 4),
 new edge('7', 2));
-graph.addVertice(new vertice('4', "4"),
+demoGraph.addVertice(new vertice('4', "4"),
 new edge('3', 4),
 new edge('7', 2),
 new edge('8', 2));
-graph.addVertice(new vertice('5', "5"),
+demoGraph.addVertice(new vertice('5', "5"),
 new edge('1', 3),
 new edge('6', 3),
 new edge('2', 2));
-graph.addVertice(new vertice('6', "6"),
+demoGraph.addVertice(new vertice('6', "6"),
 new edge('2', 2),
 new edge('5', 3),
 new edge('7', 1));
-graph.addVertice(new vertice('7', "7"),
+demoGraph.addVertice(new vertice('7', "7"),
 new edge('6', 1),
 new edge('3', 2),
 new edge('4', 2),
 new edge('8', 3));
-graph.addVertice(new vertice('8', "8"),
+demoGraph.addVertice(new vertice('8', "8"),
 new edge('4', 2),
 new edge('7', 3));
 
