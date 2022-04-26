@@ -17,7 +17,6 @@ export function new_graph_from_area(area: LookAtResultWithPos<LookConstant>[],ro
     let structure_lookup: Map<string, {index:number,x:number,y:number}> = new Map()
     let resource_lookup: Map<string, {index:number,x:number,y:number}> = new Map()
     let directions = [[0, -1], [-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1]]
-
     for (let i in terrain_and_not_walls) {
         let e = terrain_and_not_walls[i]
         let v = `${e.x},${e.y}`
@@ -28,7 +27,7 @@ export function new_graph_from_area(area: LookAtResultWithPos<LookConstant>[],ro
     for(let i in structures){
         let e = structures[i]
         let v = `${e.x},${e.y}`
-        if(e.structure?.structureType == 'controller'){
+        if(e.structure?.structureType){
             structure_lookup.set(v, {index:parseInt(i),x:e.x,y:e.y})
             out_graph.addVertice(new vertice(v, v))
         }
@@ -50,7 +49,7 @@ export function new_graph_from_area(area: LookAtResultWithPos<LookConstant>[],ro
     let vertex = out_graph.getVerticeIDSet()
     
     for (let vId of vertex) {
-        let src_lookup_index = terrain_lookup.get(vId) ==undefined ? structure_lookup.get(vId) : terrain_lookup.get(vId)
+        let src_lookup_index = terrain_lookup.get(vId) == undefined ? structure_lookup.get(vId) : terrain_lookup.get(vId)
         if (src_lookup_index == undefined)continue
         // iterate around the x y position
         for (let d of directions) {
@@ -66,7 +65,9 @@ export function new_graph_from_area(area: LookAtResultWithPos<LookConstant>[],ro
             }
         }
     }
+
     let v2 = out_graph.getVerticeIDSet()
+
     for (let vId of v2) {
         let terrain = terrain_lookup.get(vId)
         let structure = structure_lookup.get(vId)
@@ -78,11 +79,13 @@ export function new_graph_from_area(area: LookAtResultWithPos<LookConstant>[],ro
 
         if(src_lookup_index != undefined && terrain == undefined || is_edge != false){
             out_graph.SetVerticeIncomingWeight(vId,infinity)
-            out_graph.SetVerticeOutgoingWeight(vId,infinity)   
-            room.visual.text(`${src_lookup_index.x},${src_lookup_index.y}`,src_lookup_index.x,src_lookup_index.y,{color:"#FF0000",font:0.2})         
+            out_graph.SetVerticeOutgoingWeight(vId,infinity)
+            room.visual.text(`${src_lookup_index.x},${src_lookup_index.y}`,src_lookup_index.x,src_lookup_index.y,{color:"#FF0000",font:0.4})         
         }
     }
+    
     let result = minimumCut(out_graph)?.edgesOnTheCut
+
     if(result){
         for(let v of result){
             let pos = v[0].split(',')

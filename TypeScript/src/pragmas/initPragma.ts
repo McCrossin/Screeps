@@ -20,7 +20,6 @@ export function init(...args:Pragma[]){
         }
     }
     PriorityPragmas.sort((a,b)=> b.priority - a.priority)
-
 }
 
 init(
