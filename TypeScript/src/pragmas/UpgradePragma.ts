@@ -55,9 +55,11 @@ export class upgradePramga extends Pragma {
 
         if(!creep.memory.state || creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0){
             setState(States.GET_ENERGY)(creep);
+            creep.say('🔄 harvest');
         }
         if (creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0){
             setState(States.WORKING)(creep);
+            creep.say('⬆️ Upgrade');
         }
         if(creep.memory.state === States.GET_ENERGY){
             if(getEnergyFromSource(creep,creep.memory.OwnedRoom) === routineResult.SUCCESS){

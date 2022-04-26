@@ -1,8 +1,7 @@
-import path from "path"
 
 export function GenerateRoads(room:Room,origin:RoomPosition,goal:RoomPosition){
 
-    let cm =  PathFinder.search(
+    let cm = PathFinder.search(
         origin,
         {pos:goal, range:1},
         {
