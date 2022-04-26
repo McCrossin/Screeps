@@ -70,7 +70,7 @@ export function roomScanner() {
             // Min cut play
             //new_graph_from_area(currentRoom.lookAtArea(0,16,16,35,true),currentRoom)
 
-            // generate road paths to sources
+            // generate road paths to sources if they have been mapped
             Memory.OwnedRooms[roomId].roads ??= []
             if (currentRoom.memory.sources) {
 
