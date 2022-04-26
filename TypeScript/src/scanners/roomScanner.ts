@@ -4,13 +4,18 @@ import { byId } from "selectors/byId"
 import { spawnNames } from "utils/SpawnNames"
 import { distanceTransform } from "./distancetransform"
 import { new_graph_from_area } from "./minimumCut"
-
+Memory.OwnedRooms[0].name
 declare global {
     interface OwnedRoomsMemory {
+        // name of the room randomly generated
+        name: string 
+        // all the planned roads in the room
         roads?: Array<roadPath>
     }
     interface roadPath {
+        // Generated path finder object contains all the xy coords for the path
         PathFinder: PathFinderPath
+        // road id
         id: string
     }
     interface SourceInfo {
