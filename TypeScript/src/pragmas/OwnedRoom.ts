@@ -2,7 +2,6 @@ import { roles, RoleTypes } from "roles/roleTypes";
 import { spawnRole } from "roles/spawnRole";
 import { depositToEnergyStorage } from "routine/depositToEnergyStorage";
 import { getEnergyFromSource } from "routine/getEnergyFromSource";
-import { routineResult } from "routine/routineResult";
 import { setState, States } from "routine/states";
 import { byId } from "selectors/byId";
 import { Pragma, Pragmas } from "./pragma";
@@ -11,6 +10,7 @@ export const OwnedRoomPragmas: Record<string, OwnedRoomPragma> = {};
 
 
 export class OwnedRoomPragma extends Pragma {
+    
     public distance: number = Infinity;
     public disabled = false;
     public constructor(priority: number,public OwnedRoom:string,public sourceId: Id<Source>){
@@ -37,11 +37,12 @@ export class OwnedRoomPragma extends Pragma {
         if (this.distance !== Infinity && !this.disabled) return; // already set up
         const spawn = (Game.rooms[this.OwnedRoom].find(FIND_MY_SPAWNS))[0]
         const source = byId(this.sourceId)
-        
+        FIND_HOSTILE_POWER_CREEPS
         if(!source || !spawn){
             this.disabled = true
             return
         }
+
         const distance = PathFinder.search(
             spawn.pos,
             source.pos,
@@ -51,11 +52,13 @@ export class OwnedRoomPragma extends Pragma {
                 maxOps:10000
             }
         )
+
         if(distance===undefined){
             this.disabled=true
             return
         }
         this.distance=distance.cost
+        this.priority += this.distance
         this.disabled=false
 
     }
@@ -81,10 +84,12 @@ export class OwnedRoomPragma extends Pragma {
         // storage empty go mine
         if(!creep.memory.state || creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0){
             setState(States.GET_ENERGY)(creep);
+            creep.say('🔄 harvest');
         }
         // storage full deposit
         if (creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0){
             setState(States.DEPOSIT)(creep);
+            creep.say('⬆️ Deposit');
         }
         // deposit energy to storage
         if(creep.memory.state == States.DEPOSIT){
