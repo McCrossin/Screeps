@@ -81,9 +81,9 @@ export function roomScanner() {
                 let unsafeSources = hostileCreepsInRoom[i].pos.findInRange(FIND_SOURCES_ACTIVE, 3);
                 for (let j in unsafeSources){
                     let pragmaID = `OwnedRoomPragma|${unsafeSources[j].id}`
-                    let pragma = OwnedRoomPragmas[pragmaID]
-                    if(pragma != undefined){
+                    if(OwnedRoomPragmas[pragmaID] != undefined){
                         OwnedRoomPragmas[pragmaID].disabled=true
+                        console.log("The following Source has been disabled: " + unsafeSources[j].id)
                     }
                 }
             }
