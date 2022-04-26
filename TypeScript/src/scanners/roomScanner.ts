@@ -77,6 +77,7 @@ export function roomScanner() {
                             Memory.OwnedRooms[roomId].roads?.push({ id: sourceHash, PathFinder: roadPath })
                         }
                         Memory.OwnedRooms[roomId].roads?.sort((a, b) => (a.PathFinder.path.length - b.PathFinder.path.length))
+                        
                     }
                 }
             }
