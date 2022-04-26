@@ -8,7 +8,6 @@ import { Pragma, Pragmas } from "./pragma";
 
 export const OwnedRoomPragmas: Record<string, OwnedRoomPragma> = {};
 
-
 export class OwnedRoomPragma extends Pragma {
     
     public distance: number = Infinity;
@@ -16,6 +15,7 @@ export class OwnedRoomPragma extends Pragma {
     public constructor(priority: number,public OwnedRoom:string,public sourceId: Id<Source>){
         super(priority)
         this.id = `OwnedRoomPragma|${sourceId}`;
+        // Make sure we dont have duplicates for this source
         if(OwnedRoomPragmas[this.id]){
             OwnedRoomPragmas[this.id].setup();
             return OwnedRoomPragmas[this.id];
@@ -63,7 +63,7 @@ export class OwnedRoomPragma extends Pragma {
 
     }
     spawn(){
-        if(!this.checkOwnedRoom()) return;
+        if(!this.checkOwnedRoom() || this.disabled) return;
         let maxCreeps = Memory.rooms[this.OwnedRoom].sources.find(source => (source.id == this.sourceId))?.capacity
         if(!maxCreeps) maxCreeps = 1
         if(this.assigned.length < maxCreeps){
@@ -77,7 +77,7 @@ export class OwnedRoomPragma extends Pragma {
 
     }
     action(creep:Creep){
-        if(!this.checkOwnedRoom()) return;
+        if(!this.checkOwnedRoom() || this.disabled) return;
         // Lock the creeps to a specific energy source
         let result = getEnergyFromSource(creep,this.OwnedRoom,this.sourceId)
 
