@@ -83,7 +83,7 @@ export function roomScanner() {
                     let pragmaID = `OwnedRoomPragma|${unsafeSources[j].id}`
                     if(OwnedRoomPragmas[pragmaID] != undefined){
                         OwnedRoomPragmas[pragmaID].disabled=true
-                        console.log("The following Source has been disabled: " + unsafeSources[j].id)
+                        //console.log("The following Source has been disabled: " + unsafeSources[j].id)
                     }
                 }
             }
