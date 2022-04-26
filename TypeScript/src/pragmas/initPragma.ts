@@ -12,6 +12,7 @@ declare global {
 
 export const PriorityPragmas: Pragma[] = [];
 
+
 export function init(...args:Pragma[]){
     for (let pragma of args){
         if (!Pragmas[pragma.id]){
