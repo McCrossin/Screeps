@@ -1,6 +1,7 @@
-import { builderPramga } from "./BuilderPragma";
+import { builderPramga } from "./builderPragma";
+import { basicDefenderPramga } from "./basicDefenderPragma";
 import { Pragma, Pragmas } from "./pragma";
-import { upgradePramga } from "./UpgradePragma";
+import { upgradePramga } from "./upgradePragma";
 
 declare global {
     namespace NodeJS {
@@ -30,6 +31,10 @@ export function init(...args:Pragma[]){
 // load the constant pragmas with priority
 init(
     new upgradePramga(5),
-    new builderPramga(4)
+    new builderPramga(4),
+    /**TODO Initialize defenders when have more energy
+    Basic defenders will not kill the Source Defenders
+    new basicDefenderPramga(2)
+    */
 )
 global.Pragmas = Pragmas
