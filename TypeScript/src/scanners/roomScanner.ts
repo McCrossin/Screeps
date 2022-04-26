@@ -3,8 +3,7 @@ import { GenerateRoads } from "roomplanner/roads"
 import { byId } from "selectors/byId"
 import { spawnNames } from "utils/SpawnNames"
 import { distanceTransform } from "./distancetransform"
-import { new_graph_from_area } from "./minimumCut"
-Memory.OwnedRooms[0].name
+
 declare global {
     interface OwnedRoomsMemory {
         // name of the room randomly generated
@@ -19,31 +18,41 @@ declare global {
         id: string
     }
     interface SourceInfo {
+        // ID of the source object
         id: Id<Source>,
+        // Energy capacity
         capacity?: number,
+        // how far away is it from the spawn
         cost?: number
     }
     interface RoomMemory {
+        // list of all sources in a room
         sources: Array<SourceInfo>;
+        // all tile information in a room
         Tiles: LookAtResultWithPos<LookConstant>[];
     }
 }
 
 
+/**
+ * Rooms scanner
+ * Scans rooms and records useful information for later use
+ */
 export function roomScanner() {
-
+    // Prune the OwnedRooms Memory object and remove and rooms we now dont own
     for (let OwnedRoomId in Memory.OwnedRooms)
         if (!Game.rooms[OwnedRoomId]?.controller?.my) {
             delete Memory.OwnedRooms[OwnedRoomId]
         }
-
+    // Iterate over all rooms in the game
     for (let roomId in Game.rooms) {
         let currentRoom = Game.rooms[roomId]
+        // Check if we own the contorller
         if (currentRoom.controller?.my) {
             // name the room randomly
             Memory.OwnedRooms ??= {}
             if (!Memory.OwnedRooms[roomId]) {
-
+                
                 Memory.OwnedRooms[roomId] = {
                     name: spawnNames.find(name => !Object.values(Memory.OwnedRooms).some(r => r.name === name)) ?? roomId,
                 }
