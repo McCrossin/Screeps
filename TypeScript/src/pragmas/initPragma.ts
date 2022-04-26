@@ -12,7 +12,11 @@ declare global {
 
 export const PriorityPragmas: Pragma[] = [];
 
-
+/**
+ * Init Pragmas
+ * add pragmas to global list and populate priority pragmas list
+ * @param args pragmas to add to list
+ */
 export function init(...args:Pragma[]){
     for (let pragma of args){
         if (!Pragmas[pragma.id]){
@@ -23,6 +27,7 @@ export function init(...args:Pragma[]){
     PriorityPragmas.sort((a,b)=> b.priority - a.priority)
 }
 
+// load the constant pragmas with priority
 init(
     new upgradePramga(5),
     new builderPramga(4)

@@ -1,5 +1,6 @@
 import { roles, RoleTypes } from "roles/roleTypes";
 import { spawnRole } from "roles/spawnRole";
+import { depositToEnergyStorage } from "routine/depositToEnergyStorage";
 import { getEnergyFromSource } from "routine/getEnergyFromSource";
 import { routineResult } from "routine/routineResult";
 import { setState, States } from "routine/states";
@@ -74,36 +75,20 @@ export class OwnedRoomPragma extends Pragma {
     }
     action(creep:Creep){
         if(!this.checkOwnedRoom()) return;
+        // Lock the creeps to a specific energy source
         let result = getEnergyFromSource(creep,this.OwnedRoom,this.sourceId)
 
+        // storage empty go mine
         if(!creep.memory.state || creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0){
             setState(States.GET_ENERGY)(creep);
         }
+        // storage full deposit
         if (creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0){
             setState(States.DEPOSIT)(creep);
-        }        
-        if(creep.memory.state == States.DEPOSIT){
-            var targets = creep.room.find(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return (structure.structureType == STRUCTURE_EXTENSION ||
-                            structure.structureType == STRUCTURE_SPAWN ||
-                            structure.structureType == STRUCTURE_TOWER) && 
-                            structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-                }
-            });
-            if(targets.length > 0) {
-                let transfer = creep.transfer(targets[0], RESOURCE_ENERGY)
-                
-                if( transfer== ERR_NOT_IN_RANGE) {
-                creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
-                }
-                
-                if(transfer == ERR_NOT_ENOUGH_ENERGY) setState(States.GET_ENERGY)(creep);
-            }
         }
-
-
+        // deposit energy to storage
+        if(creep.memory.state == States.DEPOSIT){
+            depositToEnergyStorage(creep)
+        }
     }
 }
-
-// let x = new OwnedRoomPragma(8.5,"test","Test" as Id<Source>);
