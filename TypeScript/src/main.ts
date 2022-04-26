@@ -1,4 +1,4 @@
-import { ErrorMapper } from "utils/ErrorMapper";
+import { ErrorMapper } from "utils/errorMapper";
 import {loops} from "loops"
 declare global {
   /*

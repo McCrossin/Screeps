@@ -1,5 +1,5 @@
 import { init } from "./initPragma";
-import { OwnedRoomPragma } from "./OwnedRoom";
+import { OwnedRoomPragma } from "./ownedRoom";
 
 
 /**

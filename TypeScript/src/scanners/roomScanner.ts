@@ -1,10 +1,10 @@
-import { OwnedRoomPragmas } from "pragmas/OwnedRoom"
+import { OwnedRoomPragmas } from "pragmas/ownedRoom"
 import { Pragma, Pragmas } from "pragmas/pragma"
 import { mapRoomSources } from "roomManagement"
 import { GenerateRoads } from "roomplanner/roads"
 import { byId } from "selectors/byId"
-import { spawnNames } from "utils/SpawnNames"
-import { distanceTransform } from "./distancetransform"
+import { spawnNames } from "utils/spawnNames"
+import { distanceTransform } from "./distanceTransform"
 
 declare global {
     interface OwnedRoomsMemory {
