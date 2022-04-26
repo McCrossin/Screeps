@@ -25,6 +25,7 @@ export class builderPramga extends Pragma {
             }
         }
     }
+    // Building the closest construction site or get energy if needed
     action(creep:Creep) {
 
         if(!creep.memory.state || creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0){
