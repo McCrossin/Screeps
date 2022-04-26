@@ -76,6 +76,7 @@ export class OwnedRoomPragma extends Pragma {
     action(creep:Creep){
         if(!this.checkOwnedRoom()) return;
         // Lock the creeps to a specific energy source
+        
         let result = getEnergyFromSource(creep,this.OwnedRoom,this.sourceId)
 
         // storage empty go mine

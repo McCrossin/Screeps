@@ -1,3 +1,5 @@
+import { OwnedRoomPragmas } from "pragmas/OwnedRoom"
+import { Pragma, Pragmas } from "pragmas/pragma"
 import { mapRoomSources } from "roomManagement"
 import { GenerateRoads } from "roomplanner/roads"
 import { byId } from "selectors/byId"
@@ -69,6 +71,22 @@ export function roomScanner() {
             }
             // Min cut play
             //new_graph_from_area(currentRoom.lookAtArea(0,16,16,35,true),currentRoom)
+
+             /**TODO Turn pragma off if its too close to enemies
+            Find_Hostile_Power_Creeps
+            If there is a source within 3 tiles of a hostile powercreep turn it off.
+            */
+            let hostileCreepsInRoom = currentRoom.find(FIND_HOSTILE_CREEPS);
+            for (let i in hostileCreepsInRoom){
+                let unsafeSources = hostileCreepsInRoom[i].pos.findInRange(FIND_SOURCES_ACTIVE, 3);
+                for (let j in unsafeSources){
+                    let pragmaID = `OwnedRoomPragma|${unsafeSources[j].id}`
+                    let pragma = OwnedRoomPragmas[pragmaID]
+                    if(pragma != undefined){
+                        OwnedRoomPragmas[pragmaID].disabled=true
+                    }
+                }
+            }
 
             // generate road paths to sources if they have been mapped
             Memory.OwnedRooms[roomId].roads ??= []
