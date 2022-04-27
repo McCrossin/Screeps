@@ -1,12 +1,12 @@
 import { setState, States } from "./states";
-
+import { routineResult } from "./routineResult";
 
 /**
  * Deposits to energy storage
  * gets a creep to move to and deposit energy its holding till empty
  * @param creep creep with energy to deposit
  */
-export function depositToEnergyStorage(creep:Creep){
+export function withdrawFromEnergyStorage(creep:Creep){
     //Get potential storage targets
     var targets = creep.room.find(FIND_STRUCTURES, {
         filter: (structure) => {
@@ -18,15 +18,19 @@ export function depositToEnergyStorage(creep:Creep){
     });
     // if we have storage targets move to them and transfer
     if(targets.length > 0) {
-        let transfer = creep.transfer(targets[0], RESOURCE_ENERGY)
+        let transfer = creep.withdraw(targets[0], RESOURCE_ENERGY)
         
-        //console.log(transfer)
         if( transfer== ERR_NOT_IN_RANGE) {
         creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
         }
-        
-        if(transfer == ERR_NOT_ENOUGH_ENERGY) setState(States.GET_ENERGY)(creep);
+
+        if(creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0){
+            delete creep.memory.energySource
+            return routineResult.SUCCESS
+        }else{
+            return routineResult.INPROGRESS
+        }
     }else{
-        //Turn harvester into builder
+        return routineResult.FAILURE
     }
 }

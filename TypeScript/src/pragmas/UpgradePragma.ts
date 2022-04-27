@@ -4,6 +4,9 @@ import { getEnergyFromSource } from "routine/getEnergyFromSource";
 import { routineResult } from "routine/routineResult";
 import { spawnRole } from "roles/spawnRole";
 import { roles, RoleTypes } from "roles/roleTypes";
+import { spawn } from "child_process";
+import { withdrawFromEnergyStorage } from "routine/withdrawFromEnergyStorage";
+
 
 /**
  * Upgrade pramga
@@ -63,9 +66,13 @@ export class upgradePramga extends Pragma {
         }
         if(creep.memory.state === States.GET_ENERGY){
             
-            let energyPercentage = creep.room.energyAvailable/creep.room.energyCapacityAvailable
+            let energyPercentage = creep.room.energyAvailable/creep.room.energyCapacityAvailable;
 
-            if(getEnergyFromSource(creep,creep.memory.OwnedRoom) === routineResult.SUCCESS){
+            if (energyPercentage > 0.8){
+                if (withdrawFromEnergyStorage(creep) === routineResult.SUCCESS){
+                    setState(States.WORKING)(creep)
+                }
+            }else if(getEnergyFromSource(creep,creep.memory.OwnedRoom) === routineResult.SUCCESS){
                 setState(States.WORKING)(creep)
             }
         }
@@ -79,3 +86,4 @@ export class upgradePramga extends Pragma {
         }
     }
 }
+
