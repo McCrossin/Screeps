@@ -1,5 +1,5 @@
 import { initDynamicPragmas } from "pragmas/initDynamicPragmas";
-import { OwnedRoomPragmas } from "pragmas/OwnedRoom";
+import { OwnedRoomPragmas } from "pragmas/ownedRoom";
 import { runCreepPragmas } from "pragmas/runCreepPragmas";
 import { spawnPragmas } from "pragmas/spawnPragmas";
 import { roomScanner } from "scanners/roomScanner";
