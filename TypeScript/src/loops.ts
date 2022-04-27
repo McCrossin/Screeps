@@ -5,6 +5,7 @@ import { spawnPragmas } from "pragmas/spawnPragmas";
 import { roomScanner } from "scanners/roomScanner";
 import { byId } from "selectors/byId";
 import { Position } from "source-map";
+import { drawSourceDebug } from "UI/drawSourceDebug";
 import { drawSpawnStrucUI } from "UI/drawUI";
 import './pragmas/initPragma'
 
@@ -47,20 +48,7 @@ export function loops() {
     /**
      * Some Coloring for sources to display some information
      */
-    for (let room in Memory.OwnedRooms) {
-        for(let ORPragma in OwnedRoomPragmas){
-            let e = OwnedRoomPragmas[ORPragma]
-            let source  = byId(e.sourceId)
-            if (source != undefined) {
-                let color = e.disabled ? "red" : "white"
-                let pos = new RoomPosition(source.pos.x,source.pos.y+1,source.pos.roomName)
-                Game.rooms[room].visual.text(
-                    `Distance: ${e.distance}\r\nPriority: ${e.priority}`,
-                    pos,
-                    {color:color})
-            } 
-        }
-    }
+    drawSourceDebug()
     /**
      * Draws Spawn Power GUI element
      */
