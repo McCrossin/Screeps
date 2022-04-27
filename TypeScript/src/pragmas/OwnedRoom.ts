@@ -35,21 +35,23 @@ export class OwnedRoomPragma extends Pragma {
         if(!this.checkOwnedRoom()) return;
         
         if (this.distance !== Infinity && !this.disabled) return; // already set up
+        if (this.disabled) return // this pragma has been disabled
         const spawn = (Game.rooms[this.OwnedRoom].find(FIND_MY_SPAWNS))[0]
+        
         const source = byId(this.sourceId)
-        FIND_HOSTILE_POWER_CREEPS
+        
         if(!source || !spawn){
             this.disabled = true
             return
         }
-
+        
         const distance = PathFinder.search(
             spawn.pos,
-            source.pos,
+            {pos: source.pos,range:1},
             {
                 plainCost:2,
                 swampCost:10,
-                maxOps:10000
+                maxOps:2000
             }
         )
 
@@ -57,10 +59,12 @@ export class OwnedRoomPragma extends Pragma {
             this.disabled=true
             return
         }
+        
         this.distance=distance.cost
-        this.priority += this.distance
+        // Sets the priority the pramgas happen highest priority first
+        // the higher the distance the lower the priority as a fractio
+        this.priority += (1 / distance.cost)
         this.disabled=false
-
     }
     spawn(){
         if(!this.checkOwnedRoom() || this.disabled) return;

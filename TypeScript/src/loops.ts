@@ -1,8 +1,11 @@
 import { initDynamicPragmas } from "pragmas/initDynamicPragmas";
+import { OwnedRoomPragmas } from "pragmas/OwnedRoom";
 import { runCreepPragmas } from "pragmas/runCreepPragmas";
 import { spawnPragmas } from "pragmas/spawnPragmas";
 import { roomScanner } from "scanners/roomScanner";
-import { drawUI } from "UI/drawUI";
+import { byId } from "selectors/byId";
+import { Position } from "source-map";
+import { drawSpawnStrucUI } from "UI/drawUI";
 import './pragmas/initPragma'
 
 export function loops() {
@@ -40,11 +43,27 @@ export function loops() {
      * them their birth pragma
      */
     spawnPragmas()
-
+    /**
+     * Some Coloring for sources to display some information
+     */
+    for (let room in Memory.OwnedRooms) {
+        for(let ORPragma in OwnedRoomPragmas){
+            let e = OwnedRoomPragmas[ORPragma]
+            let source  = byId(e.sourceId)
+            if (source != undefined) {
+                let color = e.disabled ? "red" : "white"
+                let pos = new RoomPosition(source.pos.x,source.pos.y+1,source.pos.roomName)
+                Game.rooms[room].visual.text(
+                    `Distance: ${e.distance}\r\nPriority: ${e.priority}`,
+                    pos,
+                    {color:color})
+            } 
+        }
+    }
     /**
      * Draws Spawn Power GUI element
      */
     for(let i in Game.spawns){
-        drawUI(Game.spawns[i], Game.spawns[i].room.energyAvailable, Game.spawns[i].room.energyCapacityAvailable)
+        drawSpawnStrucUI(Game.spawns[i], Game.spawns[i].room.energyAvailable, Game.spawns[i].room.energyCapacityAvailable)
     }
 }

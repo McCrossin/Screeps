@@ -1,4 +1,4 @@
-export function drawUI(SpawnStructure:StructureSpawn, 
+export function drawSpawnStrucUI(SpawnStructure:StructureSpawn, 
     energyAvailable:number, energyCapacity:number) {
 
     if(SpawnStructure.spawning) {
@@ -17,10 +17,4 @@ export function drawUI(SpawnStructure:StructureSpawn,
         SpawnStructure.pos.x,
         SpawnStructure.pos.y + 1.5,
         {align: 'center', opacity: 0.8});
-    
-    
-    //console.log('Room "'+name+'" has '+ energyAvailable + '/' + energyCapacity + ' energy');
-
-
-
 }
