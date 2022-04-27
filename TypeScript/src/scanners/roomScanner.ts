@@ -1,3 +1,5 @@
+import { OwnedRoomPragmas } from "pragmas/OwnedRoom"
+import { pid } from "process"
 import { mapRoomSources } from "roomManagement"
 import { GenerateRoads } from "roomplanner/roads"
 import { byId } from "selectors/byId"
@@ -67,8 +69,6 @@ export function roomScanner() {
                 currentRoom.memory.sources ??= []
                 mapRoomSources(currentRoom);
             }
-            // Min cut play
-            //new_graph_from_area(currentRoom.lookAtArea(0,16,16,35,true),currentRoom)
 
             // generate road paths to sources if they have been mapped
             Memory.OwnedRooms[roomId].roads ??= []
