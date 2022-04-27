@@ -1,8 +1,8 @@
 import { stringify } from "querystring"
-import { minimumCut } from "./StoerWagnerMinCut"
-import { Graph } from "./StoerWagnerMinCut"
-import { vertice } from "./StoerWagnerMinCut"
-import { edge } from "./StoerWagnerMinCut"
+import { minimumCut } from "./stoerWagnerMinCut"
+import { Graph } from "./stoerWagnerMinCut"
+import { vertice } from "./stoerWagnerMinCut"
+import { edge } from "./stoerWagnerMinCut"
 
  
 export function new_graph_from_area(area: LookAtResultWithPos<LookConstant>[],room:Room) {

@@ -1,10 +1,10 @@
-import { OwnedRoomPragmas } from "pragmas/OwnedRoom"
-import { pid } from "process"
+import { OwnedRoomPragmas } from "pragmas/ownedRoom"
+import { Pragma, Pragmas } from "pragmas/pragma"
 import { mapRoomSources } from "roomManagement"
 import { GenerateRoads } from "roomplanner/roads"
 import { byId } from "selectors/byId"
-import { spawnNames } from "utils/SpawnNames"
-import { distanceTransform } from "./distancetransform"
+import { spawnNames } from "utils/spawnNames"
+import { distanceTransform } from "./distanceTransform"
 
 declare global {
     interface OwnedRoomsMemory {
@@ -68,6 +68,22 @@ export function roomScanner() {
             if (!currentRoom.memory.sources) {
                 currentRoom.memory.sources ??= []
                 mapRoomSources(currentRoom);
+            }
+
+             /**TODO Turn pragma off if its too close to enemies
+            Find_Hostile_Power_Creeps
+            If there is a source within 3 tiles of a hostile powercreep turn it off.
+            */
+            let hostileCreepsInRoom = currentRoom.find(FIND_HOSTILE_CREEPS);
+            for (let i in hostileCreepsInRoom){
+                let unsafeSources = hostileCreepsInRoom[i].pos.findInRange(FIND_SOURCES_ACTIVE, 3);
+                for (let j in unsafeSources){
+                    let pragmaID = `OwnedRoomPragma|${unsafeSources[j].id}`
+                    if(OwnedRoomPragmas[pragmaID] != undefined){
+                        OwnedRoomPragmas[pragmaID].disabled=true
+                        //console.log("The following Source has been disabled: " + unsafeSources[j].id)
+                    }
+                }
             }
 
             // generate road paths to sources if they have been mapped
