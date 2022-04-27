@@ -62,6 +62,9 @@ export class upgradePramga extends Pragma {
             creep.say('⬆️ Upgrade');
         }
         if(creep.memory.state === States.GET_ENERGY){
+            
+            let energyPercentage = creep.room.energyAvailable/creep.room.energyCapacityAvailable
+
             if(getEnergyFromSource(creep,creep.memory.OwnedRoom) === routineResult.SUCCESS){
                 setState(States.WORKING)(creep)
             }
