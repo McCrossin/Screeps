@@ -1,7 +1,9 @@
 import { roles, RoleTypes } from "roles/roleTypes";
 import { spawnRole } from "roles/spawnRole";
+import { buildConstructionSites } from "routine/buildconstrucionsites";
 import { depositToEnergyStorage } from "routine/depositToEnergyStorage";
 import { getEnergyFromSource } from "routine/getEnergyFromSource";
+import { routineResult } from "routine/routineResult";
 import { setState, States } from "routine/states";
 import { byId } from "selectors/byId";
 import { Pragma, Pragmas } from "./pragma";
@@ -98,7 +100,9 @@ export class OwnedRoomPragma extends Pragma {
         }
         // deposit energy to storage
         if(creep.memory.state == States.DEPOSIT){
-            depositToEnergyStorage(creep)
+            if(depositToEnergyStorage(creep) == routineResult.FAILURE){
+                buildConstructionSites(creep)
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ import { getEnergyFromSource } from "routine/getEnergyFromSource";
 import { routineResult } from "routine/routineResult";
 import { spawnRole } from "roles/spawnRole";
 import { roles, RoleTypes } from "roles/roleTypes";
+import { buildConstructionSites } from "routine/buildconstrucionsites";
 
 export class builderPramga extends Pragma {
     
@@ -42,16 +43,7 @@ export class builderPramga extends Pragma {
             }
         }
         if(creep.memory.state == States.WORKING){
-            let target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES)
-            if(target) {
-                let transfer = creep.build(target)
-                
-                if( transfer== ERR_NOT_IN_RANGE) {
-                creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
-                }
-                if(transfer == ERR_NOT_ENOUGH_ENERGY) setState(States.GET_ENERGY)(creep);
-            }
-            
+            buildConstructionSites(creep)
         }
     }
 }

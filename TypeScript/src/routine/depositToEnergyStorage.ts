@@ -1,4 +1,5 @@
 import { roleBuilder } from "roles/builder";
+import { routineResult } from "./routineResult";
 import { setState, States } from "./states";
 
 
@@ -23,12 +24,16 @@ export function depositToEnergyStorage(creep:Creep){
         
         //console.log(transfer)
         if( transfer== ERR_NOT_IN_RANGE) {
-        creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
+            creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
         }
         
-        if(transfer == ERR_NOT_ENOUGH_ENERGY) setState(States.GET_ENERGY)(creep);
+        if(transfer == ERR_NOT_ENOUGH_ENERGY){
+            setState(States.GET_ENERGY)(creep);
+            return routineResult.SUCCESS
+        }
+        return routineResult.INPROGRESS
     }else{
-        //Turn harvester into builder
-        creep.memory.role = "builder";
+        // Energy Storage is full!
+        return routineResult.FAILURE
     }
 }
