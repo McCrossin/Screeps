@@ -28,7 +28,7 @@ export function depositToEnergyStorage(creep:Creep){
         
         if(transfer == ERR_NOT_ENOUGH_ENERGY) setState(States.GET_ENERGY)(creep);
     }else{
-        //Turn harvester into builder
-        creep.memory.role = "builder";
+        //Turn harvester into builder (Solution is to spend more energy)
+        //creep.memory.role = "builder";
     }
 }

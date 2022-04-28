@@ -8,9 +8,11 @@ import { roles, RoleTypes } from "roles/roleTypes";
 export class builderPramga extends Pragma {
     
     shouldSpawn(OwnedRoom:string){
-        if(this.minions(OwnedRoom).length > 2) return false
+        if((this.minions(OwnedRoom).length > 2) || !(Game.rooms[OwnedRoom].energyAvailable === Game.rooms[OwnedRoom].energyCapacityAvailable)) return false
         return true
     }
+
+    
 
     spawn(){
         for (let id in Memory.OwnedRooms){
