@@ -11,8 +11,7 @@ export function withdrawFromEnergyStorage(creep:Creep){
     var targets = creep.room.find(FIND_STRUCTURES, {
         filter: (structure) => {
             return (structure.structureType == STRUCTURE_EXTENSION ||
-                    structure.structureType == STRUCTURE_SPAWN ||
-                    structure.structureType == STRUCTURE_TOWER) && 
+                    structure.structureType == STRUCTURE_SPAWN) && 
                     structure.store.getUsedCapacity(RESOURCE_ENERGY) > 0;
         }
     });
