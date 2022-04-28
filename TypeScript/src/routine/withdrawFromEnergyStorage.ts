@@ -13,13 +13,13 @@ export function withdrawFromEnergyStorage(creep:Creep){
             return (structure.structureType == STRUCTURE_EXTENSION ||
                     structure.structureType == STRUCTURE_SPAWN ||
                     structure.structureType == STRUCTURE_TOWER) && 
-                    structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+                    structure.store.getUsedCapacity(RESOURCE_ENERGY) > 0;
         }
     });
     // if we have storage targets move to them and transfer
     if(targets.length > 0) {
         let transfer = creep.withdraw(targets[0], RESOURCE_ENERGY)
-        
+        console.log(transfer)
         if( transfer== ERR_NOT_IN_RANGE) {
         creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
         }
