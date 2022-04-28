@@ -69,7 +69,7 @@ export function roomScanner() {
                 currentRoom.memory.sources ??= []
                 mapRoomSources(currentRoom);
             }
-            planExtensions(currentRoom)
+            planExtensions(currentRoom,3)
              /**TODO Turn pragma off if its too close to enemies
             Find_Hostile_Power_Creeps
             If there is a source within 3 tiles of a hostile powercreep turn it off.

@@ -2,12 +2,11 @@ declare global{
     
     /**
      * Distance transform
-     * DT infor for each Title in a room
+     * Extends a base interface and adds the closestwall property
      */
-    interface distanceTransform{
-        x: number
-        y: number
-        dist: number
+    interface distanceTransform extends LookAtResultWithPos{
+        
+        closestwall?: number
     }
 
     /**
@@ -38,7 +37,7 @@ export function distanceTransform(room:Room,top:number=0,left:number=0,bottom:nu
     // Filter tiles by type
     let walls = roomscan.filter((loc) => (loc.type == 'terrain' && loc.terrain == 'wall'))
     let plainsAndSwamps=roomscan.filter((loc) => (loc.type == 'terrain' && (loc.terrain == 'plain' || loc.terrain == 'swamp')))
-    let results=[]
+    let results:Array<distanceTransform>=[]
 
     // for each plain and swamp tile
     // search through all wall tiles for the closest wall
@@ -52,7 +51,9 @@ export function distanceTransform(room:Room,top:number=0,left:number=0,bottom:nu
             distances.push(calcDstBetweenPoints(loc.x,loc.y,wallloc.x,wallloc.y))
         }
         let closestwall = Math.min.apply(null,distances)
-        results.push({x:loc.x,y:loc.y,dist:closestwall})
+        let r = loc as distanceTransform
+        r.closestwall = closestwall
+        results.push(r)
     }
     // store the map in the rooms memory
     return results
