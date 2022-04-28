@@ -7,7 +7,6 @@ import { roles, RoleTypes } from "roles/roleTypes";
 import { spawn } from "child_process";
 import { withdrawFromEnergyStorage } from "routine/withdrawFromEnergyStorage";
 
-
 /**
  * Upgrade pramga
  * Logic to upgrade Rooms
@@ -86,4 +85,3 @@ export class upgradePramga extends Pragma {
         }
     }
 }
-

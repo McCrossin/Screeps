@@ -1,3 +1,4 @@
+import { roleBuilder } from "roles/builder";
 import { setState, States } from "./states";
 
 
@@ -28,5 +29,6 @@ export function depositToEnergyStorage(creep:Creep){
         if(transfer == ERR_NOT_ENOUGH_ENERGY) setState(States.GET_ENERGY)(creep);
     }else{
         //Turn harvester into builder
+        creep.memory.role = "builder";
     }
 }
