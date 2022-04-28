@@ -49,17 +49,29 @@ export function distanceTransform(room:Room,top:number=0,left:number=0,bottom:nu
         for (let x in walls){
             let wallloc = walls[x]
             // do some math to find out how  far away the tile is from the nearest wall
-            let dist = Math.round(Math.sqrt(
-                (
-                    Math.pow((loc.x - wallloc.x),2)+
-                    Math.pow((loc.y - wallloc.y),2)
-                )
-            ))
-            distances.push(dist)
+            distances.push(calcDstBetweenPoints(loc.x,loc.y,wallloc.x,wallloc.y))
         }
         let closestwall = Math.min.apply(null,distances)
         results.push({x:loc.x,y:loc.y,dist:closestwall})
     }
     // store the map in the rooms memory
     return results
+}
+
+/**
+ * Calculates the Distance Between two X Y Co-ordinates
+ * √[(x₂ - x₁)² + (y₂ - y₁)²]
+ * @param p1_x 
+ * @param p1_y 
+ * @param p2_x 
+ * @param p2_y 
+ * @returns  
+ */
+export function calcDstBetweenPoints(p1_x:number,p1_y:number, p2_x: number,p2_y: number) {
+    return Math.round(Math.sqrt(
+        (
+            Math.pow((p1_x - p2_x), 2) +
+            Math.pow((p1_y - p2_y), 2)
+        )
+    ))
 }
