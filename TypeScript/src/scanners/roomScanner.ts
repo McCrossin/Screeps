@@ -5,13 +5,15 @@ import { GenerateRoads } from "roomplanner/roads"
 import { byId } from "selectors/byId"
 import { spawnNames } from "utils/spawnNames"
 import { distanceTransform } from "./distanceTransform"
-import { planExtensions } from "roomplanner/planExtensions"
+import { planExtensions, plannedExtensions } from "roomplanner/planExtensions"
+import { Console } from "console"
 declare global {
     interface OwnedRoomsMemory {
         // name of the room randomly generated
         name: string 
         // all the planned roads in the room
         roads?: Array<roadPath>
+        plannedExtensions?: Array<plannedExtensions>
     }
     interface roadPath {
         // Generated path finder object contains all the xy coords for the path
@@ -44,32 +46,47 @@ export function roomScanner() {
     // Prune the OwnedRooms Memory object and remove and rooms we now dont own
     for (let OwnedRoomId in Memory.OwnedRooms)
         if (!Game.rooms[OwnedRoomId]?.controller?.my) {
+            console.log(`Removing ${Game.rooms[OwnedRoomId].name} `)
             delete Memory.OwnedRooms[OwnedRoomId]
         }
     // Iterate over all rooms in the game
     for (let roomId in Game.rooms) {
         let currentRoom = Game.rooms[roomId]
+        let CurrentRoomMemory = Memory.OwnedRooms[roomId]
         // Check if we own the contorller
         if (currentRoom.controller?.my) {
             // name the room randomly
             Memory.OwnedRooms ??= {}
-            if (!Memory.OwnedRooms[roomId]) {
-                
-                Memory.OwnedRooms[roomId] = {
+            if (!CurrentRoomMemory) {
+                console.log(`Adding a new room to Owned Rooms! ${currentRoom.name}`)
+                CurrentRoomMemory = {
                     name: spawnNames.find(name => !Object.values(Memory.OwnedRooms).some(r => r.name === name)) ?? roomId,
                 }
             }
             //create a distance transform map
-            Memory.OwnedRooms[roomId].distanceTransform ??= []
-            if (!Memory.OwnedRooms[roomId].distanceTransform) {
-                Memory.OwnedRooms[roomId].distanceTransform=distanceTransform(currentRoom)
+            CurrentRoomMemory.distanceTransform ??= []
+            if (!CurrentRoomMemory.distanceTransform) {
+                console.log(`Created Distance Transform for: ${currentRoom.name}`)
+                CurrentRoomMemory.distanceTransform=distanceTransform(currentRoom)
             }
             // Map Room Sources, location and capacity
             if (!currentRoom.memory.sources) {
+                console.log(`Mapping Sources for: ${currentRoom.name}`)
                 currentRoom.memory.sources ??= []
+                
                 mapRoomSources(currentRoom);
             }
-            planExtensions(currentRoom,3)
+            // Plan out the extension map
+            CurrentRoomMemory.plannedExtensions ??= []
+            if (!CurrentRoomMemory.distanceTransform) {
+                console.log(`Planned Extension for ${currentRoom.name}`)
+                CurrentRoomMemory.plannedExtensions=planExtensions(currentRoom)
+            }
+            if(CurrentRoomMemory.plannedExtensions != undefined){
+                for (let i of CurrentRoomMemory.plannedExtensions) {
+                    currentRoom.visual.text(i.closestspawn ? i.closestspawn.toString() : '',i.x,i.y)
+                }
+            }
              /**TODO Turn pragma off if its too close to enemies
             Find_Hostile_Power_Creeps
             If there is a source within 3 tiles of a hostile powercreep turn it off.
@@ -87,21 +104,21 @@ export function roomScanner() {
             }
 
             // generate road paths to sources if they have been mapped
-            Memory.OwnedRooms[roomId].roads ??= []
+            CurrentRoomMemory.roads ??= []
             if (currentRoom.memory.sources) {
 
                 let spawn = (currentRoom.find(FIND_MY_SPAWNS))[0]
                 for (let sourceID in currentRoom.memory.sources) {
                     let sourceHash = currentRoom.memory.sources[sourceID].id
-                    let check = Memory.OwnedRooms[roomId].roads?.find((road) => (road.id == sourceHash))
+                    let check = CurrentRoomMemory.roads?.find((road) => (road.id == sourceHash))
                     if (check) continue;
                     let source = byId(sourceHash)
                     if (source) {
                         let roadPath = GenerateRoads(currentRoom, spawn.pos, source.pos)
                         if (roadPath) {
-                            Memory.OwnedRooms[roomId].roads?.push({ id: sourceHash, PathFinder: roadPath })
+                            CurrentRoomMemory.roads?.push({ id: sourceHash, PathFinder: roadPath })
                         }
-                        Memory.OwnedRooms[roomId].roads?.sort((a, b) => (a.PathFinder.path.length - b.PathFinder.path.length))
+                        CurrentRoomMemory.roads?.sort((a, b) => (a.PathFinder.path.length - b.PathFinder.path.length))
                         
                     }
                 }
