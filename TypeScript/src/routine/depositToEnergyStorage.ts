@@ -33,7 +33,12 @@ export function depositToEnergyStorage(creep:Creep){
         }
         return routineResult.INPROGRESS
     }else{
+<<<<<<< HEAD
         // Energy Storage is full!
         return routineResult.FAILURE
+=======
+        //Turn harvester into builder (Solution is to spend more energy)
+        //creep.memory.role = "builder";
+>>>>>>> 828f11f1e6a3a8f88af0a71138af5fd665365daa
     }
 }
