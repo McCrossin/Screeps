@@ -25,9 +25,16 @@ declare global{
  * a DT gives you a weighting of tiles from a target in this case walls
  * @param room the room to make a Distance Transform of
  */
-export function distanceTransform(room:Room){
+export function distanceTransform(room:Room,top:number=0,left:number=0,bottom:number=0,right:number=0){
     // Scan the whole room
-    let roomscan = room.lookAtArea(0,0,50,50,true)
+    if (top == 0 && left == 0 && bottom == 0 && right == 0) {
+        top = 0
+        left = 0
+        bottom = 50
+        right = 50
+    }
+    let roomscan = room.lookAtArea(top,left,bottom,right,true)    
+    
     // Filter tiles by type
     let walls = roomscan.filter((loc) => (loc.type == 'terrain' && loc.terrain == 'wall'))
     let plainsAndSwamps=roomscan.filter((loc) => (loc.type == 'terrain' && (loc.terrain == 'plain' || loc.terrain == 'swamp')))
@@ -54,5 +61,5 @@ export function distanceTransform(room:Room){
         results.push({x:loc.x,y:loc.y,dist:closestwall})
     }
     // store the map in the rooms memory
-    Memory.OwnedRooms[room.name].distanceTransform=results
+    return results
 }

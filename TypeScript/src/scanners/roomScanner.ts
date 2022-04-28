@@ -5,7 +5,7 @@ import { GenerateRoads } from "roomplanner/roads"
 import { byId } from "selectors/byId"
 import { spawnNames } from "utils/spawnNames"
 import { distanceTransform } from "./distanceTransform"
-
+import { planExtensions } from "roomplanner/planExtensions"
 declare global {
     interface OwnedRoomsMemory {
         // name of the room randomly generated
@@ -62,14 +62,14 @@ export function roomScanner() {
             //create a distance transform map
             Memory.OwnedRooms[roomId].distanceTransform ??= []
             if (!Memory.OwnedRooms[roomId].distanceTransform) {
-                distanceTransform(currentRoom)
+                Memory.OwnedRooms[roomId].distanceTransform=distanceTransform(currentRoom)
             }
             // Map Room Sources, location and capacity
             if (!currentRoom.memory.sources) {
                 currentRoom.memory.sources ??= []
                 mapRoomSources(currentRoom);
             }
-
+            planExtensions(currentRoom)
              /**TODO Turn pragma off if its too close to enemies
             Find_Hostile_Power_Creeps
             If there is a source within 3 tiles of a hostile powercreep turn it off.
