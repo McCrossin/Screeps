@@ -19,7 +19,6 @@ export function loops() {
     for(let ownedRoomId in Memory.OwnedRooms){
         initDynamicPragmas(ownedRoomId)
     }
-    
     /**
      * roomScanner is used to recon new rooms and gather useful information about them
      * Distance transform map, location of source's, do we own the room etc

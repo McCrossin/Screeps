@@ -1,12 +1,10 @@
 import { OwnedRoomPragmas } from "pragmas/ownedRoom"
-import { Pragma, Pragmas } from "pragmas/pragma"
 import { mapRoomSources } from "roomManagement"
 import { GenerateRoads } from "roomplanner/roads"
 import { byId } from "selectors/byId"
 import { spawnNames } from "utils/spawnNames"
 import { distanceTransform } from "./distanceTransform"
 import { planExtensions, plannedExtensions } from "roomplanner/planExtensions"
-import { Console } from "console"
 declare global {
     interface OwnedRoomsMemory {
         // name of the room randomly generated
@@ -52,20 +50,20 @@ export function roomScanner() {
     // Iterate over all rooms in the game
     for (let roomId in Game.rooms) {
         let currentRoom = Game.rooms[roomId]
-        let CurrentRoomMemory = Memory.OwnedRooms[roomId]
         // Check if we own the contorller
         if (currentRoom.controller?.my) {
             // name the room randomly
             Memory.OwnedRooms ??= {}
-            if (!CurrentRoomMemory) {
+            if (!Memory.OwnedRooms[roomId]) {
                 console.log(`Adding a new room to Owned Rooms! ${currentRoom.name}`)
-                CurrentRoomMemory = {
+                Memory.OwnedRooms[roomId] = {
                     name: spawnNames.find(name => !Object.values(Memory.OwnedRooms).some(r => r.name === name)) ?? roomId,
                 }
             }
+            let CurrentRoomMemory = Memory.OwnedRooms[roomId]
             //create a distance transform map
             CurrentRoomMemory.distanceTransform ??= []
-            if (!CurrentRoomMemory.distanceTransform) {
+            if (CurrentRoomMemory.distanceTransform.length === 0) {
                 console.log(`Created Distance Transform for: ${currentRoom.name}`)
                 CurrentRoomMemory.distanceTransform=distanceTransform(currentRoom)
             }
@@ -78,7 +76,7 @@ export function roomScanner() {
             }
             // Plan out the extension map
             CurrentRoomMemory.plannedExtensions ??= []
-            if (!CurrentRoomMemory.distanceTransform) {
+            if (CurrentRoomMemory.plannedExtensions.length === 0) {
                 console.log(`Planned Extension for ${currentRoom.name}`)
                 CurrentRoomMemory.plannedExtensions=planExtensions(currentRoom)
             }
