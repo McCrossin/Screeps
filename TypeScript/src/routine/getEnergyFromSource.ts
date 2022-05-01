@@ -68,8 +68,8 @@ export function getEnergyFromSource(creep:Creep,OwnedRoom:string,sourceId?:Id<So
     // expected to have an energy source assigned by now
     if(!creep.memory.energySource) return routineResult.FAILURE
 
-
     let source = Game.getObjectById(creep.memory.energySource)
+    
     if (!source) return routineResult.FAILURE
     // Move to within range of the Source and mine it
     if (creep.moveTo(source.pos) == OK){

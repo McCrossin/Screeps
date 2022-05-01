@@ -1,5 +1,6 @@
 import { ErrorMapper } from "utils/errorMapper";
 import {loops} from "loops"
+
 declare global {
   /*
     Example types, expand on these or remove them and add your own.
@@ -35,6 +36,10 @@ declare global {
 }
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
+
+// Any modules that you use that modify the game's prototypes should be require'd
+// before you require the profiler.
+
 export const loop = ErrorMapper.wrapLoop(() => {
   /**
    * Calls the main game loops

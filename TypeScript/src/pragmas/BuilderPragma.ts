@@ -22,7 +22,7 @@ export class builderPramga extends Pragma {
                     id,
                     this.id,
                     RoleTypes.T1,
-                    roles[RoleTypes.T1](150)
+                    roles[RoleTypes.T1](Game.rooms[id].energyAvailable)
                 )
             }
         }

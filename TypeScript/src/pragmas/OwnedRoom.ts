@@ -77,7 +77,7 @@ export class OwnedRoomPragma extends Pragma {
                 this.OwnedRoom,
                 this.id,
                 RoleTypes.T1,
-                roles[RoleTypes.T1](150)
+                roles[RoleTypes.T1](Game.rooms[this.OwnedRoom].energyAvailable)
             )
         }
 
@@ -85,23 +85,27 @@ export class OwnedRoomPragma extends Pragma {
     action(creep:Creep){
         if(!this.checkOwnedRoom() || this.disabled) return;
         // Lock the creeps to a specific energy source
-        
-        let result = getEnergyFromSource(creep,this.OwnedRoom,this.sourceId)
+        if(creep.memory.role === RoleTypes.T2_Worker){
 
-        // storage empty go mine
-        if(!creep.memory.state || creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0){
-            setState(States.GET_ENERGY)(creep);
-            creep.say('🔄 harvest');
         }
-        // storage full deposit
-        if (creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0){
-            setState(States.DEPOSIT)(creep);
-            creep.say('⬆️ Deposit');
-        }
-        // deposit energy to storage
-        if(creep.memory.state == States.DEPOSIT){
-            if(depositToEnergyStorage(creep) == routineResult.FAILURE){
-                buildConstructionSites(creep)
+        if(creep.memory.role === RoleTypes.T1){
+            let result = getEnergyFromSource(creep,this.OwnedRoom,this.sourceId)
+
+            // storage empty go mine
+            if(!creep.memory.state || creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0){
+                setState(States.GET_ENERGY)(creep);
+                creep.say('🔄 harvest');
+            }
+            // storage full deposit
+            if (creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0){
+                setState(States.DEPOSIT)(creep);
+                creep.say('⬆️ Deposit');
+            }
+            // deposit energy to storage
+            if(creep.memory.state == States.DEPOSIT){
+                if(depositToEnergyStorage(creep) == routineResult.FAILURE){
+                    buildConstructionSites(creep)
+                }
             }
         }
     }
