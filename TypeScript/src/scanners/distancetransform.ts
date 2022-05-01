@@ -13,7 +13,7 @@ declare global{
      * Owned rooms memory
      * add a place to store the distance transform
      */
-    interface OwnedRoomsMemory{
+    interface OwnedRoomMemory{
         distanceTransform?: Array<distanceTransform>
     }
 }

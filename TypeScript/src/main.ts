@@ -16,7 +16,7 @@ declare global {
   interface Memory {
     uuid: number;
     log: any;
-    OwnedRooms: {[name:string]:OwnedRoomsMemory}
+    OwnedRooms: {[name:string]:OwnedRoomMemory}
   }
   
   interface CreepMemory {

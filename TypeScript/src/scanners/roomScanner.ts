@@ -1,18 +1,20 @@
 import { OwnedRoomPragmas } from "pragmas/ownedRoom"
 import { planExtensions, plannedExtensions } from "roomplanner/planExtensions"
 import { GenerateRoads } from "roomplanner/roads"
+import { construcitonSitePriority } from "routine/buildconstrucionsites"
 import { byId } from "selectors/byId"
 import { spawnNames } from "utils/spawnNames"
 import { distanceTransform } from "./distanceTransform"
 import { mapRoomSources } from "./SourceScanner"
-
 declare global {
-    interface OwnedRoomsMemory {
+    interface OwnedRoomMemory {
         // name of the room randomly generated
         name: string 
         // all the planned roads in the room
         roads?: Array<roadPath>
         plannedExtensions?: Array<plannedExtensions>
+        builtextension?: Array<RoomPosition>
+        priorityConstructionSites?:Array<ConstructionSite<BuildableStructureConstant>>
     }
     interface roadPath {
         // Generated path finder object contains all the xy coords for the path
@@ -47,7 +49,7 @@ export function roomScanner(): void {
     for (let roomId in Game.rooms) {
         let currentRoom = Game.rooms[roomId]
         // Check if we own the contorller
-        if (currentRoom.controller?.my) {
+        if (currentRoom.controller?.my != undefined) {
             // name the room randomly
             newRoomName(roomId, currentRoom)
             
@@ -64,14 +66,62 @@ export function roomScanner(): void {
              * If there is a source within 3 tiles of a hostile powercreep turn it off.
             */
             findHostilePowerCreeps(currentRoom)
-
             // generate road paths to sources if they have been mapped
-            newRoaPaths(CurrentRoomMemory,currentRoom)
+            newRoadPaths(CurrentRoomMemory,currentRoom)
+            
+            if(Game.time & 10){
+                // Place extension construction sites.
+                newExtensionConsturctionSites(CurrentRoomMemory,currentRoom)
+                prioritiseConstructionSites(CurrentRoomMemory,currentRoom)
+
+            }
         }
     }
 }
 
-function newRoaPaths(roomMemory:OwnedRoomsMemory,room:Room): void{
+function prioritiseConstructionSites(roomMemory:OwnedRoomMemory,room:Room):void{
+    
+    let site = roomMemory.priorityConstructionSites = room.find(FIND_CONSTRUCTION_SITES)
+    site.sort((a,b)=>
+    {
+        let aa =construcitonSitePriority[a.structureType]
+        let bb =construcitonSitePriority[b.structureType]
+        if(bb != undefined && aa != undefined){
+            return bb - aa
+        }else{
+            return 0
+        }
+    })
+}
+
+function newExtensionConsturctionSites(RoomMemory:OwnedRoomMemory,room:Room):void{
+    RoomMemory.builtextension ??= []
+    if(!room.controller?.my) return
+    if(RoomMemory.builtextension.length < 5 && room.controller.level >= 2){
+        let closest = RoomMemory.plannedExtensions?.sort((a,b) =>{
+            if (a.closestspawn == undefined || b.closestspawn == undefined) return 1
+            return a.closestspawn - b.closestspawn
+        })
+        if (closest == undefined) return
+        let total = 5
+        for (let i = 0; i < total; i++) {
+            const e = closest[i];
+
+            let r = room.createConstructionSite(
+                e.x,
+                e.y,
+                STRUCTURE_EXTENSION
+            )
+            if(r == ERR_INVALID_TARGET) {
+                total += 1
+            }else{
+                RoomMemory.builtextension.push(new RoomPosition(e.x,e.y,room.name))
+            }
+        }
+    }
+}
+
+function newRoadPaths(roomMemory:OwnedRoomMemory,room:Room): void{
     roomMemory.roads ??= []
     if (room.memory.sources.length != 0 && roomMemory.roads.length === 0) {
         console.log(`Planned roads for: ${room.name}`)
@@ -115,16 +165,11 @@ function findHostilePowerCreeps(room: Room): void {
     }
 }
 
-function newExtensionplan(roomMemory: OwnedRoomsMemory, room: Room): void {
+function newExtensionplan(roomMemory: OwnedRoomMemory, room: Room): void {
     roomMemory.plannedExtensions ??= []
     if (roomMemory.plannedExtensions.length === 0) {
         console.log(`Planned Extension for ${room.name}`)
         roomMemory.plannedExtensions = planExtensions(room)
-    }
-    if (roomMemory.plannedExtensions != undefined) {
-        for (let i of roomMemory.plannedExtensions) {
-            room.visual.text(i.closestspawn ? i.closestspawn.toString() : '', i.x, i.y)
-        }
     }
 }
 
@@ -138,7 +183,7 @@ function newSourceMap(room: Room): void {
     }
 }
 
-function newDistanceTransform(roomMemory: OwnedRoomsMemory, room: Room): void {
+function newDistanceTransform(roomMemory: OwnedRoomMemory, room: Room): void {
     roomMemory.distanceTransform ??= []
     if (roomMemory.distanceTransform.length === 0) {
         console.log(`Created Distance Transform for: ${room.name}`)

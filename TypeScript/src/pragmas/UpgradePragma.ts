@@ -22,7 +22,7 @@ export class upgradePramga extends Pragma {
      */
     shouldSpawn(OwnedRoom:string){
         // TODO do better than this currently no more than 2 upgraders
-        if(this.minions(OwnedRoom).length > 2) return false
+        if(this.minions(OwnedRoom).length > 3) return false
         return true
     }
 

@@ -5,11 +5,12 @@ import { routineResult } from "routine/routineResult";
 import { spawnRole } from "roles/spawnRole";
 import { roles, RoleTypes } from "roles/roleTypes";
 import { buildConstructionSites } from "routine/buildconstrucionsites";
+import { withdrawFromEnergyStorage } from "routine/withdrawFromEnergyStorage";
 
 export class builderPramga extends Pragma {
     
     shouldSpawn(OwnedRoom:string){
-        if(this.minions(OwnedRoom).length > 2) return false
+        if(this.minions(OwnedRoom).length > 3) return false
         return true
     }
 
@@ -38,7 +39,13 @@ export class builderPramga extends Pragma {
             creep.say('🚧 build');
         }
         if(creep.memory.state === States.GET_ENERGY){
-            if(getEnergyFromSource(creep,creep.memory.OwnedRoom) === routineResult.SUCCESS){
+            let energyPercentage = creep.room.energyAvailable/creep.room.energyCapacityAvailable;
+
+            if (energyPercentage > 0.8){
+                if (withdrawFromEnergyStorage(creep) === routineResult.SUCCESS){
+                    setState(States.WORKING)(creep)
+                }
+            }else if(getEnergyFromSource(creep,creep.memory.OwnedRoom) === routineResult.SUCCESS){
                 setState(States.WORKING)(creep)
             }
         }
