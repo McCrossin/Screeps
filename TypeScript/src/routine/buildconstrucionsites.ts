@@ -1,3 +1,4 @@
+import { byId } from "selectors/byId";
 import { routineResult } from "./routineResult";
 import { setState, States } from "./states";
 
@@ -27,11 +28,13 @@ export const construcitonSitePriority:{[name:string]:number} = {
 
 export function buildConstructionSites(creep:Creep){
     // build a priority site
-    let PSites = Memory.OwnedRooms[creep.room.name].priorityConstructionSites
-    if(PSites != undefined && PSites?.length > 0){
-        let t = creep.build(PSites[0])
+    let PConSites = Memory.OwnedRooms[creep.room.name].priorityConstructionSites
+    if(PConSites != undefined && PConSites?.length > 0){
+        let PConSite = byId(PConSites[0].id)
+        if(PConSite == undefined)return
+        let t = creep.build(PConSite)
         if( t== ERR_NOT_IN_RANGE) {
-            creep.moveTo(PSites[0], {visualizePathStyle: {stroke: '#ffffff'}})
+            creep.moveTo(PConSite, {visualizePathStyle: {stroke: '#ffffff'}})
         }
         if(t == ERR_NOT_ENOUGH_ENERGY) {
             setState(States.GET_ENERGY)(creep)

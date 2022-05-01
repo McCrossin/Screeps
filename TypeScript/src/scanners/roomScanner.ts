@@ -81,7 +81,7 @@ export function roomScanner(): void {
 
 function prioritiseConstructionSites(roomMemory:OwnedRoomMemory,room:Room):void{
     
-    let site = roomMemory.priorityConstructionSites = room.find(FIND_CONSTRUCTION_SITES)
+    let site =  room.find(FIND_CONSTRUCTION_SITES)
     site.sort((a,b)=>
     {
         let aa =construcitonSitePriority[a.structureType]
@@ -92,6 +92,7 @@ function prioritiseConstructionSites(roomMemory:OwnedRoomMemory,room:Room):void{
             return 0
         }
     })
+    roomMemory.priorityConstructionSites = site
 }
 
 function newExtensionConsturctionSites(RoomMemory:OwnedRoomMemory,room:Room):void{
