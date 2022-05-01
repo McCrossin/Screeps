@@ -9,6 +9,6 @@ import { OwnedRoomPragma } from "./ownedRoom";
  */
 export function initDynamicPragmas(OwnedRoom:string){
     init(
-        ...Memory.rooms[OwnedRoom].sources.map(source => new OwnedRoomPragma(8.5,OwnedRoom,source.id))
+        ...Memory.OwnedRooms[OwnedRoom].sources.map(source => new OwnedRoomPragma(8.5,OwnedRoom,source.id))
     )
 }

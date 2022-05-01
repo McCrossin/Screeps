@@ -22,7 +22,7 @@ export function mapRoomSources(room:Room){
                 }
             }
         }
-        let roomSourceInfo=room.memory.sources
+        let roomSourceInfo=Memory.OwnedRooms[room.name].sources
         
         let exists = roomSourceInfo.findIndex((SourceInfo:SourceInfo) => {return SourceInfo.id == source.id})
 

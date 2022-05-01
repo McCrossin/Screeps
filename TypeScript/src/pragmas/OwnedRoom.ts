@@ -70,7 +70,7 @@ export class OwnedRoomPragma extends Pragma {
     }
     spawn(){
         if(!this.checkOwnedRoom() || this.disabled) return;
-        let maxCreeps = Memory.rooms[this.OwnedRoom].sources.find(source => (source.id == this.sourceId))?.capacity
+        let maxCreeps = Memory.OwnedRooms[this.OwnedRoom].sources.find(source => (source.id == this.sourceId))?.capacity
         if(!maxCreeps) maxCreeps = 1
         if(this.assigned.length < maxCreeps){
             spawnRole(

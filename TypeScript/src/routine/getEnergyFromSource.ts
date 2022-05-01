@@ -41,7 +41,7 @@ export function getEnergyFromSource(creep:Creep,OwnedRoom:string,sourceId?:Id<So
         let room  = Game.rooms[OwnedRoom]
         if (room){
 
-            let [source1,source2] = room.memory.sources.map(sources =>
+            let [source1,source2] = Memory.OwnedRooms[OwnedRoom].sources.map(sources =>
                 {
                 //check we can get the source object
                 let sourceId = sources.id as Id<Source>
