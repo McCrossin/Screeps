@@ -2,6 +2,7 @@ import { OwnedRoomPragmas } from "pragmas/ownedRoom"
 import { planExtensions, plannedExtensions } from "roomplanner/planExtensions"
 import { GenerateRoads } from "roomplanner/roads"
 import { construcitonSitePriority } from "routine/buildconstrucionsites"
+import { buildingStatus } from "routine/routineResult"
 import { byId } from "selectors/byId"
 import { spawnNames } from "utils/spawnNames"
 import { distanceTransform } from "./distanceTransform"
@@ -13,8 +14,14 @@ declare global {
         plannedExtensions?: Array<plannedExtensions>
         builtextension?: Array<RoomPosition>
         priorityConstructionSites?:Array<ConstructionSite<BuildableStructureConstant>>
-        plannedSourceContainers?:{[name:Id<Source>]:RoomPosition}
         sources: Array<SourceInfo>;
+        containersSetup?:boolean
+    }
+    interface container{
+        pos:RoomPosition
+        status:buildingStatus
+        id?:Id<Structure<StructureConstant>>
+
     }
     interface SourceInfo {
         // ID of the source object
@@ -24,6 +31,7 @@ declare global {
         // how far away is it from the spawn
         cost?: number
         road?:PathFinderPath
+        container?:container
     }
     interface RoomMemory {
         // all tile information in a room
@@ -55,16 +63,22 @@ export function roomScanner(): void {
             findHostilePowerCreeps(currentRoom)
             
             if(Game.time % 10){
+                if(currentRoom.controller.level >= 2){
+                    // Plan out the extension map
+                    newExtensionplan(currentRoomMemory, currentRoom)
+                    // Plan and place containers
+                    newSourceContainer(currentRoomMemory,currentRoom)
+
+                }
                 //create a distance transform map
                 newDistanceTransform(currentRoomMemory, currentRoom)
                 // Map Room Sources, location and capacity
                 newSourceMap(currentRoomMemory,currentRoom)
-                // Plan out the extension map
-                newExtensionplan(currentRoomMemory, currentRoom)
                 // generate road paths to sources if they have been mapped
                 newRoadPaths(currentRoomMemory,currentRoom)
                 // Place extension construction sites.
-                newExtensionConsturctionSites(currentRoomMemory,currentRoom)
+                newExtensionConstructionSites(currentRoomMemory,currentRoom)
+                // Place Container
                 prioritiseConstructionSites(currentRoomMemory,currentRoom)
 
             }
@@ -72,7 +86,47 @@ export function roomScanner(): void {
     }
 }
 
-function newSourceContainer(roomMemory:OwnedRoomMemory,room:Room){
+function newSourceContainer(roomMemory:OwnedRoomMemory,room:Room): void{
+    roomMemory.containersSetup ??=false
+    if(roomMemory.containersSetup == true) return
+    // Sort sources by there cost && filter out complete sources
+    let sortedSources = roomMemory.sources.sort((a,b)=>{return (a.cost != undefined && a.cost != undefined) ? (a.cost - a.cost) : 0}).filter((a)=>{return a.container?.status != buildingStatus.COMPLETE})
+    if(sortedSources[0].container != undefined && sortedSources[0].container.status != buildingStatus.INPROGRESS){
+        sortedSources[0].container.status = buildingStatus.INPROGRESS
+    }else if(sortedSources.length == 0){roomMemory.containersSetup=true}
+    for (const s of roomMemory.sources) {
+        // This is dependent on the roads to sources being planned
+        let loc = s.road?.path[s.road?.path.length-1]
+        if(loc == undefined){continue}
+        // Plan out a container
+        s.container ??= {pos:new RoomPosition(loc.x,loc.y,room.name),status:buildingStatus.PLANNED}
+        // dont place the consturction site till the building status is set to INPROGRESS
+        if(s.container.status != buildingStatus.INPROGRESS) continue
+        let plannedLoc = room.lookAt(s.container.pos.x,s.container.pos.y)
+        let building:LookAtResult|undefined = plannedLoc.find((a)=>{return a.type === LOOK_CONSTRUCTION_SITES || a.type === LOOK_STRUCTURES})
+        // Place a container construction site if something else is placed
+        if(building?.constructionSite?.structureType != STRUCTURE_CONTAINER && building?.constructionSite?.structureType == STRUCTURE_ROAD){
+            building?.constructionSite?.remove()
+            room.createConstructionSite(s.container.pos.x,s.container.pos.y,STRUCTURE_CONTAINER)
+        }
+        // Set inprogess if a container construction site is present
+        else if(building?.constructionSite?.structureType == STRUCTURE_CONTAINER) s.container.status = buildingStatus.INPROGRESS
+        // If a building already exists and its not a container remove
+        else if(building?.structure?.structureType != STRUCTURE_CONTAINER && building?.structure?.structureType == STRUCTURE_ROAD){
+            building?.structure?.destroy()
+            room.createConstructionSite(s.container.pos.x,s.container.pos.y,STRUCTURE_CONTAINER)
+        }
+        // If a container is built here then mark as complete
+        else if(building?.structure?.structureType == STRUCTURE_CONTAINER){
+            s.container.status = buildingStatus.COMPLETE
+            s.container.id = building.structure.id}
+        else{
+            room.createConstructionSite(s.container.pos.x,s.container.pos.y,STRUCTURE_CONTAINER)
+        }
+    }
+}
+
+function getDamagedStructures(roomMemory:OwnedRoomMemory,room:Room){
 
 }
 
@@ -92,7 +146,7 @@ function prioritiseConstructionSites(roomMemory:OwnedRoomMemory,room:Room):void{
     roomMemory.priorityConstructionSites = site
 }
 
-function newExtensionConsturctionSites(RoomMemory:OwnedRoomMemory,room:Room):void{
+function newExtensionConstructionSites(RoomMemory:OwnedRoomMemory,room:Room):void{
     RoomMemory.builtextension ??= []
     if(!room.controller?.my) return
     if(RoomMemory.builtextension.length < 5 && room.controller.level >= 2){

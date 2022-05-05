@@ -19,7 +19,7 @@ export const construcitonSitePriority:{[name:string]:number} = {
     "extractor" : 1,
     "lab" : 1,
     "terminal" : 1,
-    "container" : 1,
+    "container" : 6,
     "nuker" : 1,
     "factory" : 1,
     "invaderCore" : 1,

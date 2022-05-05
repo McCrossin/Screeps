@@ -3,3 +3,9 @@ export enum routineResult {
     FAILURE = 'FAILURE',
     INPROGRESS = 'INPROGRESS'
 }
+
+export enum buildingStatus {
+    PLANNED ='PLANNED',
+    INPROGRESS = 'INPROGRESS',
+    COMPLETE = 'COMPLETE'
+}

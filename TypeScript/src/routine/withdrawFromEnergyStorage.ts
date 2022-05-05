@@ -19,19 +19,21 @@ export function withdrawFromEnergyStorage(creep:Creep){
     });
     // if we have storage targets move to them and transfer
     if(targets.length > 0) {
-        let transfer = creep.withdraw(targets[0], RESOURCE_ENERGY)
-        
-        if( transfer== ERR_NOT_IN_RANGE) {
-        creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
-        }
-
-        if(creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0){
-            delete creep.memory.energySource
-            return routineResult.SUCCESS
-        }else{
-            return routineResult.INPROGRESS
-        }
+        return withdrawEnergyFromStructure(creep,targets[0])
     }else{
         return routineResult.FAILURE
+    }
+}
+export function withdrawEnergyFromStructure(creep:Creep,structure:Structure<StructureConstant>){
+    let transfer = creep.withdraw(structure, RESOURCE_ENERGY)
+        
+    //console.log(transfer)
+    if( transfer== ERR_NOT_IN_RANGE) {
+        creep.moveTo(structure, {visualizePathStyle: {stroke: '#ffffff'}});
+    }
+    if(creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0){
+        return routineResult.SUCCESS
+    }else{
+        return routineResult.INPROGRESS
     }
 }

@@ -1,6 +1,7 @@
 import { Pragmas } from "pragmas/pragma";
 import { byId } from "selectors/byId";
 import { routineResult } from "./routineResult";
+import { withdrawEnergyFromStructure } from "./withdrawFromEnergyStorage";
 
 declare global {
 
@@ -22,6 +23,12 @@ declare global {
  * @param [sourceId] the id of the energy source
  * @returns a routine success or failure
  */
+export function getEnergyFromContainer(creep:Creep,containerId?:Id<Structure<StructureConstant>>){
+    let container = byId(containerId)
+    if (container == undefined )return routineResult.FAILURE
+    return withdrawEnergyFromStructure(creep,container)
+}
+
 export function getEnergyFromSource(creep:Creep,OwnedRoom:string,sourceId?:Id<Source>){
     
     // Set the creeps target if specified as a variable
