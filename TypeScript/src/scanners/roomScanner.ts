@@ -67,7 +67,12 @@ export function roomScanner(): void {
                     // Plan out the extension map
                     newExtensionplan(currentRoomMemory, currentRoom)
                     // Plan and place containers
-                    newSourceContainer(currentRoomMemory,currentRoom)
+                    let struc = currentRoom.find(FIND_STRUCTURES)
+                    let ext = struc.filter((a)=>{return a.structureType == STRUCTURE_EXTENSION})
+                    let con = struc.filter((a)=>{return a.structureType == STRUCTURE_CONTAINER})
+                    if(!(con.length > 1) || ext.length > 5){
+                        newSourceContainer(currentRoomMemory,currentRoom)
+                    }
 
                 }
                 //create a distance transform map
@@ -90,7 +95,7 @@ function newSourceContainer(roomMemory:OwnedRoomMemory,room:Room): void{
     roomMemory.containersSetup ??=false
     if(roomMemory.containersSetup == true) return
     // Sort sources by there cost && filter out complete sources
-    let sortedSources = roomMemory.sources.sort((a,b)=>{return (a.cost != undefined && a.cost != undefined) ? (a.cost - a.cost) : 0}).filter((a)=>{return a.container?.status != buildingStatus.COMPLETE})
+    let sortedSources = roomMemory.sources.sort((a,b)=>{return (a.cost != undefined && b.cost != undefined) ? (a.cost - b.cost) : 0}).filter((a)=>{return a.container?.status != buildingStatus.COMPLETE})
     if(sortedSources[0].container != undefined && sortedSources[0].container.status != buildingStatus.INPROGRESS){
         sortedSources[0].container.status = buildingStatus.INPROGRESS
     }else if(sortedSources.length == 0){roomMemory.containersSetup=true}
