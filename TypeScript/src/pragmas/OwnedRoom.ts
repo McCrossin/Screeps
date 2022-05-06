@@ -90,7 +90,15 @@ export class OwnedRoomPragma extends Pragma {
             let c = byId(a)
             if(c != undefined){return c.memory.role === RoleTypes.T1}
             return})
-        if(Tier1.length < maxCreeps){
+        if(this.getSourceContainer!= undefined && Game.rooms[this.OwnedRoom].energyAvailable > 550){
+            spawnRole(
+                this.OwnedRoom,
+                this.id,
+                RoleTypes.T2_Worker,
+                roles[RoleTypes.T2_Worker](Game.rooms[this.OwnedRoom].energyAvailable)
+            )
+        }
+        else if(Tier1.length < maxCreeps){
             spawnRole(
                 this.OwnedRoom,
                 this.id,
