@@ -1,3 +1,4 @@
+import { setState, States } from "routine/states";
 import { byId } from "selectors/byId";
 import { isCreep } from "selectors/typeGuards";
 
@@ -65,4 +66,11 @@ export abstract class Pragma {
         }
         return (this._workers.get(index) ?? []).map(byId).filter(isCreep)
     }
+
+    public setCreepInitialState(creep: Creep) {
+        if (!creep.memory.state || creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
+            setState(States.GET_ENERGY)(creep);
+            creep.say('🔄 harvest');
+        }
+    }    
 }

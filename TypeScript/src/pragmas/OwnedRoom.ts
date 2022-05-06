@@ -1,3 +1,4 @@
+import { stringify } from "querystring";
 import { roles, RoleTypes } from "roles/roleTypes";
 import { spawnRole } from "roles/spawnRole";
 import { buildConstructionSites } from "routine/buildconstrucionsites";
@@ -30,9 +31,6 @@ export class OwnedRoomPragma extends Pragma {
         delete OwnedRoomPragmas[this.id];
         delete Pragmas[this.id];
         return false;
-    }
-    getSourceMemory(){
-        return Memory.OwnedRooms[this.OwnedRoom].sources.find((a)=>{return a.id == this.sourceId})
     }
     setup(){
         if(!this.checkOwnedRoom()) return;
@@ -76,7 +74,8 @@ export class OwnedRoomPragma extends Pragma {
             let c = byId(a)
             if(c != undefined){return c.memory.role === RoleTypes.T2_Carry}
             return})
-        if(carry.length <= 2 && this.getSourceMemory()?.container?.status == buildingStatus.COMPLETE){
+        let container = this.getSourceContainer()
+        if(carry.length <= 2 && container != undefined && container.store.energy > 50){
             spawnRole(
                 this.OwnedRoom,
                 this.id,
@@ -104,32 +103,8 @@ export class OwnedRoomPragma extends Pragma {
         if(!this.checkOwnedRoom() || this.disabled) return;
         // Lock the creeps to a specific energy source
         if(creep.memory.role === RoleTypes.T2_Worker){
-
-        }
-        if(creep.memory.role === RoleTypes.T2_Carry){
-            if(!creep.memory.state || creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0){
-                setState(States.GET_ENERGY)(creep);
-                creep.say('🔄 collecting');
-            }
-            if(creep.memory.state == States.GET_ENERGY){
-                let container = this.getSourceMemory()?.container
-                if(container?.id != undefined && container.status == buildingStatus.COMPLETE){
-                    let r = getEnergyFromContainer(creep,container?.id)
-                    if(r == routineResult.SUCCESS) setState(States.DEPOSIT)(creep)
-                }
-            }
-            if(creep.memory.state == States.DEPOSIT){
-                depositToEnergyStorage(creep)
-            }
-            
-        }
-        if(creep.memory.role === RoleTypes.T1){
-            let result = getEnergyFromSource(creep,this.OwnedRoom,this.sourceId)
-            // storage empty go mine
-            if(!creep.memory.state || creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0){
-                setState(States.GET_ENERGY)(creep);
-                creep.say('🔄 harvest');
-            }
+            this.setCreepInitialState(creep);
+            let result = getEnergyFromSource(creep,this.OwnedRoom,this.sourceId,true)
             // storage full deposit
             if (result == routineResult.SUCCESS){
                 setState(States.DEPOSIT)(creep);
@@ -137,20 +112,64 @@ export class OwnedRoomPragma extends Pragma {
             }
             // deposit energy to storage
             if(creep.memory.state == States.DEPOSIT){
-                let container = this.getSourceMemory()?.container
-                if(container != undefined && container.status == buildingStatus.COMPLETE){
-                    let containerObj = byId(container.id)
-                    if(containerObj != undefined){
-                        let  r = transferEnergyToStructure(creep,containerObj)
-                        if(r == routineResult.FAILURE){
-                            depositToEnergyStorage(creep)
-                        }
+                if(this.containerDeposit(creep) == routineResult.FAILURE){
+                    if(depositToEnergyStorage(creep) == routineResult.FAILURE){
+                        buildConstructionSites(creep)
                     }
-                }
-                else if(depositToEnergyStorage(creep) == routineResult.FAILURE){
-                    buildConstructionSites(creep)
                 }
             }
         }
+        if(creep.memory.role === RoleTypes.T2_Carry){
+            this.setCreepInitialState(creep);
+            switch (creep.memory.state) {
+                case States.GET_ENERGY:
+                    let container = this.getSourceContainer()
+                    if(container != undefined){
+                        let r = getEnergyFromContainer(creep,container?.id)
+                        if(r == routineResult.SUCCESS) setState(States.DEPOSIT)(creep)                    
+                    }
+                    break;
+                case States.DEPOSIT:
+                    if(depositToEnergyStorage(creep) == routineResult.SUCCESS){
+                        setState(States.GET_ENERGY)(creep)
+                    }
+                    break;
+            }
+        }
+        if(creep.memory.role === RoleTypes.T1){
+            this.setCreepInitialState(creep);
+            let result = getEnergyFromSource(creep,this.OwnedRoom,this.sourceId,true)
+            // storage full deposit
+            if (result == routineResult.SUCCESS){
+                setState(States.DEPOSIT)(creep);
+                creep.say('⬆️ Deposit');
+            }
+            // deposit energy to storage
+            if(creep.memory.state == States.DEPOSIT){
+                if(this.containerDeposit(creep) == routineResult.FAILURE){
+                    if(depositToEnergyStorage(creep) == routineResult.FAILURE){
+                        buildConstructionSites(creep)
+                    }
+                }
+            }
+        }
+    }
+
+    private containerDeposit(creep: Creep) {
+        let container = this.getSourceContainer();
+        if (container != undefined) {
+            console.log("Foundcontainer")
+            return transferEnergyToStructure(creep, container);
+        }
+        return routineResult.FAILURE
+    }
+
+    private getSourceContainer() {
+        let container = Memory.OwnedRooms[this.OwnedRoom].sources.find((a)=>{return a.id == this.sourceId})?.container;
+        if (container?.id != undefined && container.status == buildingStatus.COMPLETE) {
+            let containerObj = byId(container.id)
+            if(containerObj != undefined) return containerObj as StructureContainer
+        }
+        return undefined 
     }
 }

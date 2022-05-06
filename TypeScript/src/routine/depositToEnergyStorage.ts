@@ -33,7 +33,6 @@ export function transferEnergyToStructure(creep:Creep,structure:Structure<Struct
     if( transfer== ERR_NOT_IN_RANGE) {
         creep.moveTo(structure, {visualizePathStyle: {stroke: '#ffffff'}});
     }
-    
     if(transfer == ERR_NOT_ENOUGH_ENERGY){
         setState(States.GET_ENERGY)(creep);
         return routineResult.SUCCESS

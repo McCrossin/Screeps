@@ -1,6 +1,7 @@
+import { type } from "os";
 import { Pragmas } from "pragmas/pragma";
 import { byId } from "selectors/byId";
-import { routineResult } from "./routineResult";
+import { buildingStatus, routineResult } from "./routineResult";
 import { withdrawEnergyFromStructure } from "./withdrawFromEnergyStorage";
 
 declare global {
@@ -29,7 +30,16 @@ export function getEnergyFromContainer(creep:Creep,containerId?:Id<Structure<Str
     return withdrawEnergyFromStructure(creep,container)
 }
 
-export function getEnergyFromSource(creep:Creep,OwnedRoom:string,sourceId?:Id<Source>){
+export function getContainerFromSourceID(sourceId:Id<Source>,roomName:string){
+    let container = Memory.OwnedRooms[roomName].sources.find((a)=>{return a.id == sourceId})?.container;
+    if (container?.id != undefined && container.status == buildingStatus.COMPLETE) {
+        let containerObj = byId(container.id) as StructureContainer
+        if(containerObj != undefined) return containerObj
+    }
+    return undefined  
+}
+
+export function getEnergyFromSource(creep:Creep,OwnedRoom:string,sourceId?:Id<Source>,harvestOnly:boolean=false){
     
     // Set the creeps target if specified as a variable
     if(!creep.memory.energySource){
@@ -74,16 +84,27 @@ export function getEnergyFromSource(creep:Creep,OwnedRoom:string,sourceId?:Id<So
 
     // expected to have an energy source assigned by now
     if(!creep.memory.energySource) return routineResult.FAILURE
-
-    let source = Game.getObjectById(creep.memory.energySource)
+    let source = byId(creep.memory.energySource)
     
     if (!source) return routineResult.FAILURE
-    // Move to within range of the Source and mine it
-    if (creep.moveTo(source.pos) == OK){
-        if (creep.harvest(source) == ERR_NOT_IN_RANGE || OK){
-            return routineResult.INPROGRESS
+    if(harvestOnly == false){
+        let container = getContainerFromSourceID(creep.memory.energySource,OwnedRoom)
+        if (container != undefined && container.store.energy > 50){
+            return withdrawEnergyFromStructure(creep,container)
         }
     }
+
+    // Move to within range of the Source and mine it
+    let r = creep.harvest(source)
+    if (r == ERR_NOT_IN_RANGE){
+        if (creep.moveTo(source.pos) == OK){
+            return routineResult.INPROGRESS
+        }
+        
+    }else if(r = OK){
+        routineResult.INPROGRESS
+    }
+
     // harvest till capacity is free then return success and forget this energy source
     if(creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0){
         delete creep.memory.energySource

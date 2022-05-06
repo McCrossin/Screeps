@@ -22,7 +22,7 @@ export class upgradePramga extends Pragma {
      */
     shouldSpawn(OwnedRoom:string){
         // TODO do better than this currently no more than 2 upgraders
-        if(this.minions(OwnedRoom).length > 3) return false
+        if(this.minions(OwnedRoom).length > 2) return false
         return true
     }
 
@@ -54,11 +54,7 @@ export class upgradePramga extends Pragma {
      * @returns  
      */
     action(creep:Creep) {
-
-        if(!creep.memory.state || creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0){
-            setState(States.GET_ENERGY)(creep);
-            creep.say('🔄 harvest');
-        }
+        this.setCreepInitialState(creep)
         if (creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0){
             setState(States.WORKING)(creep);
             creep.say('⬆️ Upgrade');

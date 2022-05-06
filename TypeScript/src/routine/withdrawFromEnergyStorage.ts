@@ -27,13 +27,14 @@ export function withdrawFromEnergyStorage(creep:Creep){
 export function withdrawEnergyFromStructure(creep:Creep,structure:Structure<StructureConstant>){
     let transfer = creep.withdraw(structure, RESOURCE_ENERGY)
         
-    //console.log(transfer)
     if( transfer== ERR_NOT_IN_RANGE) {
         creep.moveTo(structure, {visualizePathStyle: {stroke: '#ffffff'}});
     }
     if(creep.store.getFreeCapacity(RESOURCE_ENERGY) === 0){
         return routineResult.SUCCESS
-    }else{
-        return routineResult.INPROGRESS
     }
+    if(transfer=ERR_NOT_ENOUGH_ENERGY){
+        return routineResult.FAILURE
+    }
+    return routineResult.INPROGRESS
 }
