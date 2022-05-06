@@ -1,3 +1,4 @@
+import { max } from "lodash";
 import { stringify } from "querystring";
 import { roles, RoleTypes } from "roles/roleTypes";
 import { spawnRole } from "roles/spawnRole";
@@ -74,6 +75,10 @@ export class OwnedRoomPragma extends Pragma {
             let c = byId(a)
             if(c != undefined){return c.memory.role === RoleTypes.T2_Carry}
             return})
+        let T2_work = this.assigned.filter((a)=>{
+            let c = byId(a)
+            if(c != undefined){return c.memory.role === RoleTypes.T2_Worker}
+            return})
         let container = this.getSourceContainer()
         if(carry.length <= 2 && container != undefined && container.store.energy > 50){
             spawnRole(
@@ -90,7 +95,9 @@ export class OwnedRoomPragma extends Pragma {
             let c = byId(a)
             if(c != undefined){return c.memory.role === RoleTypes.T1}
             return})
-        if(this.getSourceContainer!= undefined && Game.rooms[this.OwnedRoom].energyAvailable > 550){
+        if(!(T2_work.length <1))maxCreeps = 1
+        if(this.getSourceContainer!= undefined && Game.rooms[this.OwnedRoom].energyAvailable >= 550 && T2_work.length < 1){
+            
             spawnRole(
                 this.OwnedRoom,
                 this.id,
