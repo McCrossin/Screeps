@@ -158,7 +158,6 @@ export class OwnedRoomPragma extends Pragma {
     private containerDeposit(creep: Creep) {
         let container = this.getSourceContainer();
         if (container != undefined) {
-            console.log("Foundcontainer")
             return transferEnergyToStructure(creep, container);
         }
         return routineResult.FAILURE
