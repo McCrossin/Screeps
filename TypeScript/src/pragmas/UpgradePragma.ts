@@ -12,16 +12,16 @@ import { withdrawFromEnergyStorage } from "routine/withdrawFromEnergyStorage";
  * Logic to upgrade Rooms
  */
 export class upgradePramga extends Pragma {
-    
+
 
     /**
      * Should spawn
      * determins if we should spawn creeps for this pragma
      * @param OwnedRoom room to check if we should spawn
-     * @returns  
+     * @returns
      */
     shouldSpawn(OwnedRoom:string){
-        // TODO do better than this currently no more than 2 upgraders
+        // TODO do better, currently no more than 2 upgraders
         if(this.minions(OwnedRoom).length > 2) return false
         return true
     }
@@ -33,7 +33,7 @@ export class upgradePramga extends Pragma {
      */
     spawn(){
         for (let id in Memory.OwnedRooms){
-            
+
             if(this.shouldSpawn(id) == true){
                 spawnRole(
                     id,
@@ -48,10 +48,10 @@ export class upgradePramga extends Pragma {
 
     /**
      * Actions upgrade pramga
-     * Currently creeps will upgrade the controller 
-     * in the  room and get energy as needed 
+     * Currently creeps will upgrade the controller
+     * in the  room and get energy as needed
      * @param creep creep to task with an action
-     * @returns  
+     * @returns
      */
     action(creep:Creep) {
         this.setCreepInitialState(creep)
@@ -60,7 +60,7 @@ export class upgradePramga extends Pragma {
             creep.say('⬆️ Upgrade');
         }
         if(creep.memory.state === States.GET_ENERGY){
-            
+
             let energyPercentage = creep.room.energyAvailable/creep.room.energyCapacityAvailable;
 
             if (energyPercentage > 0.8){
@@ -74,7 +74,7 @@ export class upgradePramga extends Pragma {
         if(creep.memory.state == States.WORKING){
             let controller = creep.room.controller
             if(!controller) return;
-            
+
             let result=creep.upgradeController(controller)
             if(result == ERR_NOT_IN_RANGE)creep.moveTo(controller, {visualizePathStyle: {stroke: '#ffffff'}});
             if (result == ERR_NOT_ENOUGH_ENERGY) setState(States.GET_ENERGY)(creep);

@@ -1,4 +1,4 @@
-import { OwnedRoomPragmas } from "pragmas/ownedRoom"
+import { OwnedRoomPragmas } from "pragmas/OwnedRoom"
 import { byId } from "selectors/byId"
 
 export function drawSourceDebug() {

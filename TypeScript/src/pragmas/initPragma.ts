@@ -1,7 +1,7 @@
-import { builderPramga } from "./builderPragma";
+import { builderPramga } from "./BuilderPragma";
 import { basicDefenderPramga } from "./basicDefenderPragma";
 import { Pragma, Pragmas } from "./pragma";
-import { upgradePramga } from "./upgradePragma";
+import { upgradePramga } from "./UpgradePragma";
 
 declare global {
     namespace NodeJS {

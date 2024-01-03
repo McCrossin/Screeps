@@ -46,19 +46,19 @@ export const roles = {
             return ([] as BodyPartConstant[]).concat(
                 Array(workParts).fill(WORK),
                 Array(moveParts).fill(MOVE)
-            )            
+            )
         }
-        
+
     },
     [RoleTypes.T2_Carry]: (energy:number,maxSegments:number=25,roads:boolean=false) => {
         if (energy <= 300){
             return [CARRY,MOVE]
         }else if(!roads){
-            const parts = Math.min(25, maxSegments, Math.floor(energy / 2) / 100)
+            const parts = Math.min(16, maxSegments, Math.floor((energy / 2) / 100) )
             return Array(parts).fill([CARRY, MOVE]).flat();
         } else {
-            const parts = Math.min(16, maxSegments, Math.floor(energy / 2) / 150)
+            const parts = Math.min(16, maxSegments, Math.floor((energy / 2) / 150))
             return Array(parts).fill([CARRY,CARRY, MOVE]).flat();
         }
-    }    
+    }
 }

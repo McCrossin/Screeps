@@ -1,5 +1,3 @@
-import { max } from "lodash";
-import { stringify } from "querystring";
 import { roles, RoleTypes } from "roles/roleTypes";
 import { spawnRole } from "roles/spawnRole";
 import { buildConstructionSites } from "routine/buildconstrucionsites";
@@ -35,18 +33,18 @@ export class OwnedRoomPragma extends Pragma {
     }
     setup(){
         if(!this.checkOwnedRoom()) return;
-        
+
         if (this.distance !== Infinity && !this.disabled) return; // already set up
         if (this.disabled) return // this pragma has been disabled
         const spawn = (Game.rooms[this.OwnedRoom].find(FIND_MY_SPAWNS))[0]
-        
+
         const source = byId(this.sourceId)
-        
+
         if(!source || !spawn){
             this.disabled = true
             return
         }
-        
+
         const distance = PathFinder.search(
             spawn.pos,
             {pos: source.pos,range:1},
@@ -61,16 +59,16 @@ export class OwnedRoomPragma extends Pragma {
             this.disabled=true
             return
         }
-        
+
         this.distance=distance.cost
         // Sets the priority the pramgas happen highest priority first
-        // the higher the distance the lower the priority as a fractio
+        // the higher the distance the lower the priority as a fraction
         this.priority += (1 / distance.cost)
         this.disabled=false
     }
     spawn(){
         if(!this.checkOwnedRoom() || this.disabled) return;
-        
+
         let carry=this.assigned.filter((a)=>{
             let c = byId(a)
             if(c != undefined){return c.memory.role === RoleTypes.T2_Carry}
@@ -87,8 +85,8 @@ export class OwnedRoomPragma extends Pragma {
                 RoleTypes.T2_Carry,
                 roles[RoleTypes.T2_Carry](Game.rooms[this.OwnedRoom].energyAvailable)
             )
-        }        
-        
+        }
+
         let maxCreeps = Memory.OwnedRooms[this.OwnedRoom].sources.find(source => (source.id == this.sourceId))?.capacity
         if(!maxCreeps) maxCreeps = 1
         let Tier1 = this.assigned.filter((a)=>{
@@ -97,7 +95,7 @@ export class OwnedRoomPragma extends Pragma {
             return})
         if(!(T2_work.length <1))maxCreeps = 1
         if(this.getSourceContainer!= undefined && Game.rooms[this.OwnedRoom].energyAvailable >= 550 && T2_work.length < 1){
-            
+
             spawnRole(
                 this.OwnedRoom,
                 this.id,
@@ -141,7 +139,7 @@ export class OwnedRoomPragma extends Pragma {
                     let container = this.getSourceContainer()
                     if(container != undefined){
                         let r = getEnergyFromContainer(creep,container?.id)
-                        if(r == routineResult.SUCCESS) setState(States.DEPOSIT)(creep)                    
+                        if(r == routineResult.SUCCESS) setState(States.DEPOSIT)(creep)
                     }
                     break;
                 case States.DEPOSIT:
@@ -184,6 +182,6 @@ export class OwnedRoomPragma extends Pragma {
             let containerObj = byId(container.id)
             if(containerObj != undefined) return containerObj as StructureContainer
         }
-        return undefined 
+        return undefined
     }
 }

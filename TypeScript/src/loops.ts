@@ -29,14 +29,14 @@ export function loops() {
     /**
      * Each Creep on spawn is assigned a pragma in memory > Pragma
      * This is the name of the Pragma object in the Pragmas array (pragma.ts)
-     * Assuming the creep is assigned one which it 
+     * Assuming the creep is assigned one which it
      * should the action function of the pragma will get called
-     * 
+     *
      */
     for(let id in Game.creeps){
         runCreepPragmas(Game.creeps[id])
     }
-    
+
     /**
      * Uses the PriorityPragmas array (pragmas array sorted by priority)
      * to execute all contained pragmas .spawn() methods in that order
@@ -53,5 +53,13 @@ export function loops() {
      */
     for(let i in Game.spawns){
         drawSpawnStrucUI(Game.spawns[i], Game.spawns[i].room.energyAvailable, Game.spawns[i].room.energyCapacityAvailable)
+    }
+
+    if (Game.time % 500 === 0) {
+      for(var i in Memory.creeps) {
+        if(!Game.creeps[i]) {
+            delete Memory.creeps[i];
+        }
+    }
     }
 }
