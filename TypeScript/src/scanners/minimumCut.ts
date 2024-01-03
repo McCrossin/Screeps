@@ -1,12 +1,12 @@
 import { stringify } from "querystring"
-import { minimumCut } from "./stoerWagnerMinCut"
-import { Graph } from "./stoerWagnerMinCut"
-import { vertice } from "./stoerWagnerMinCut"
-import { edge } from "./stoerWagnerMinCut"
+import { minimumCut } from "./StoerWagnerMinCut"
+import { Graph } from "./StoerWagnerMinCut"
+import { vertice } from "./StoerWagnerMinCut"
+import { edge } from "./StoerWagnerMinCut"
 
- 
+
 export function new_graph_from_area(area: LookAtResultWithPos<LookConstant>[],room:Room) {
-    
+
     const infinity = 10 ** 8
     let out_graph = new Graph()
     let terrain_and_not_walls = area.filter((a) => ( a.type == 'terrain' && a.terrain != 'wall')).sort((a, b) => { return a.y == b.y ? a.x - b.x : a.y - b.y; })
@@ -45,9 +45,9 @@ export function new_graph_from_area(area: LookAtResultWithPos<LookConstant>[],ro
         if (x == 0 || x == 49 || y == 0 || y == 49) return true
         return false
     }
-    
+
     let vertex = out_graph.getVerticeIDSet()
-    
+
     for (let vId of vertex) {
         let src_lookup_index = terrain_lookup.get(vId) == undefined ? structure_lookup.get(vId) : terrain_lookup.get(vId)
         if (src_lookup_index == undefined)continue
@@ -80,10 +80,10 @@ export function new_graph_from_area(area: LookAtResultWithPos<LookConstant>[],ro
         if(src_lookup_index != undefined && terrain == undefined || is_edge != false){
             out_graph.SetVerticeIncomingWeight(vId,infinity)
             out_graph.SetVerticeOutgoingWeight(vId,infinity)
-            room.visual.text(`${src_lookup_index.x},${src_lookup_index.y}`,src_lookup_index.x,src_lookup_index.y,{color:"#FF0000",font:0.4})         
+            room.visual.text(`${src_lookup_index.x},${src_lookup_index.y}`,src_lookup_index.x,src_lookup_index.y,{color:"#FF0000",font:0.4})
         }
     }
-    
+
     let result = minimumCut(out_graph)?.edgesOnTheCut
 
     if(result){
@@ -96,5 +96,5 @@ export function new_graph_from_area(area: LookAtResultWithPos<LookConstant>[],ro
             let y2 = parseInt(pos2[1])
             room.visual.line(x,y,x2,y2,{color:"#FF0000"})
         }
-    }    
+    }
 }
